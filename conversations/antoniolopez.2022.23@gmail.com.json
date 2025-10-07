@@ -1,0 +1,692 @@
+{
+  "conversations": [
+    {
+      "id": "1b62dcfc-2d42-4b49-a03c-7a613f5ed7ea",
+      "title": "2 de Octubre",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "Que poda es mejor para que cosa, bien para crear más uva y producir más, bien para fomentar la salud de la planta. Podar en hoja o con la savia muerta y podar en Albuñol o con parra a ambos lados y pulgares",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Mira, si quieres priorizar la cantidad de uva, ve por una poda en verde, que es cuando la savia está activa, para estimular el crecimiento de brotes y racimos. Pero si tu objetivo es la salud de la planta, lo mejor es esperar a que la savia esté muerta, en pleno invierno. Así fortaleces la estructura y evitas enfermedades. En cuanto a la forma, si estás en Albuñol, lo típico es el vaso o la espaldera según el terreno. Elige vaso para un manejo más tradicional y resistente, y espaldera si buscas mecanización y un mejor control del dosel. Aquí el clima y el tipo de suelo te van a dar pistas. ¿Cómo ves el vigor de tus viñas ahora mismo?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "tengo espaldera pero no se si sacar dos sarmientos o solo uno",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Con espaldera y buscando un buen equilibrio entre producción y salud de la planta, saca dos sarmientos. Así repartes mejor la carga y aseguras una buena ventilación y exposición solar, lo que disminuye el riesgo de enfermedades. Pero ojo, si los sarmientos son demasiado vigorosos, pueden llevar a un exceso de sombra. En ese caso, controla bien el crecimiento durante la temporada. ¿Has notado si los sarmientos son muy largos o vigorosos en tu viñedo?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y el albuñol, seria buena opcion?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "El Albuñol puede ser una buena opción si buscas adaptarte a un manejo más tradicional y estás en una zona con condiciones climáticas que lo permitan. Este sistema es ideal para terrenos que no son totalmente planos y permite una buena exposición al sol y ventilación, lo cual es excelente para la salud de la planta. Sin embargo, ten en cuenta que requiere más mano de obra y puede ser menos eficiente si estás buscando mecanización. Dime, ¿cómo es el terreno donde tienes tus viñas? ¿Es llano o tiene pendiente?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "pero el albuñol es más rapido",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Sí, el Albuñol es más rápido en cuanto a la poda, ya que es un sistema que se adapta bien a la estructura natural de la planta y facilita un manejo más sencillo. Además, permite un flujo de aire que reduce el riesgo de enfermedades. Si la rapidez y el manejo manual son importantes para ti y las condiciones del terreno lo permiten, podría ser una buena opción. ¿Cómo andas de mano de obra para la poda esta temporada?",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2025-10-02T16:59:17.410Z",
+      "updatedAt": "2025-10-02T17:01:22.930Z"
+    },
+    {
+      "id": "304fe6ca-2ad6-4deb-9efa-6d922fd38ac0",
+      "title": "2",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "Quiero tratar con boro mi viñedo, como debo aplicarlo, en dos veces?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Aplica boro una sola vez, justo antes de la floración. Usa un producto foliar y hazlo un día nublado o a primera hora para evitar quemaduras. Asegúrate de que las hojas estén bien cubiertas y evita mezclar con otros productos que no sean compatibles.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y si lo aplico también post cuaja?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "No, no te lo recomiendo. Aplicar boro después de la cuaja puede crear desequilibrios y afectar la calidad del fruto. Concéntrate en la aplicación antes de la floración para asegurar que las plantas tengan el boro necesario cuando más lo necesitan.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "como ves 300 cm 3 en 500 litros?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Esa dosis está bien. Asegúrate de que el mojado sea uniforme en las hojas. Aplica con buenas condiciones climáticas, evitando horas de mucho calor para mejorar la absorción.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y 600 cm3 en 500 litros?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "600 cm³ en 500 litros es demasiado. Podrías provocar toxicidad en las hojas. Quédate con los 300 cm³; es una dosis segura y efectiva para obtener buenos resultados sin riesgos.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "pero dicen que es recomendable dos veces",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Entiendo lo que dicen, pero en mi experiencia práctica, una sola aplicación antes de la floración es suficiente para cubrir las necesidades del viñedo. Hacerlo dos veces puede llevar a exceso y problemas. Confía en una buena aplicación inicial y observa los resultados.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "eres demasiado precabido con las dosis",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Prefiero ser precavido para evitar problemas que puedan afectar la salud de tus viñas y la calidad de la cosecha. Una dosis excesiva puede causar más daño que beneficio. Mantengámonos en lo seguro para proteger tu inversión y asegurar un buen rendimiento.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y al contrario, una corta puede no resolver el problema",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Es cierto, pero 300 cm³ por 500 litros es una dosis probada que funciona bien en la mayoría de los casos. Si ves que tus viñas tienen síntomas claros de deficiencia de boro después de la aplicación, podríamos considerar un ajuste en el futuro. Por ahora, lo importante es aplicar bien y observar los resultados.",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2025-08-23T18:34:57.552Z",
+      "updatedAt": "2025-08-23T18:56:39.551Z"
+    },
+    {
+      "id": "bd59d834-fde9-4d06-9ae2-71497c3d9fe4",
+      "title": "1",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "Hola",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Hola! ¿Cómo está todo por el viñedo hoy? ¿Algún tema en el que pueda echarte una mano?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "es aconsejable utilizar abono 15-15-15 en invierno?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "No uses abono 15-15-15 en invierno. El viñedo está en reposo y no va a absorber esos nutrientes eficientemente. Guarda esos fertilizantes para la primavera, cuando las plantas comiencen a crecer de nuevo. Ahora, si no has hecho una enmienda orgánica de fondo, podrías aplicar materia orgánica como compost para mejorar el suelo y su estructura de cara a la próxima temporada.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y en secano?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Tampoco en secano. En invierno, el viñedo está en reposo y el suelo no tiene la actividad necesaria para aprovechar un abono químico como el 15-15-15. En su lugar, mejora la capacidad del suelo para retener humedad y nutrientes con una enmienda orgánica. Esto te dará mejores resultados a largo plazo cuando llegue la primavera.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "pero es una práctica muy habitual",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Entiendo que se haga mucho, pero si buscas eficacia, en invierno no es el momento adecuado. Los nutrientes no se van a utilizar y pueden incluso perderse con las lluvias. En secano, maximiza el potencial del suelo con materia orgánica. Eso sí te va a dar beneficios reales cuando la planta lo necesite.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "entonces cual es el momento, normalmente lo hacemos en abril, es un buen momento",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Abril es un buen momento. En primavera, las vides están saliendo del reposo y comienzan a crecer activamente. Ahí es cuando aprovecharán mejor los nutrientes del abono 15-15-15. Aplica cuando veas que los brotes empiezan a desarrollarse, así te aseguras de que estén disponibles justo cuando la planta los necesite.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "nosotromos enterramos el abono, pero como es mejor pasar por todos los bancos y enterrarlo cerca de la cepa o pasar cada dos bancos y que el abono se quede algo más lejos",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Entiérralo cerca de la cepa. Así garantizas que los nutrientes estén donde las raíces puedan acceder más fácilmente. Pasar por todos los bancos y aplicarlo cerca de cada cepa es más trabajo, pero te aseguras de que cada planta reciba lo que necesita para crecer fuerte y saludable.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "volviendo al tratamiento de boro, puedo dar dos aplicaciones?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Sí, puedes dar dos aplicaciones de boro, especialmente si has notado deficiencias anteriormente. Haz una aplicación justo antes de la floración y otra durante el cuajado. Así te aseguras de que las plantas tengan suficiente boro cuando más lo necesitan para la formación del fruto. Asegúrate de seguir las dosis recomendadas para evitar toxicidad.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "pero antes me has dicho que no",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Perdona si no me expliqué bien antes. En cuanto al boro, dos aplicaciones son útiles si has tenido problemas de deficiencia. Solo asegúrate de que realmente lo necesites, porque el exceso puede ser perjudicial. Si ya aplicaste una vez y todo está bien, una segunda aplicación podría no ser necesaria.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "haz un plan de aplicación para el boro",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Vamos a hacer esto sencillo. Aplica boro en dos momentos clave: \n\n1. **Antes de la floración:** Haz la primera aplicación cuando las yemas estén hinchadas y a punto de abrirse. Esto ayudará a preparar la planta para una buena floración.\n\n2. **Durante el cuajado:** Aplica nuevamente cuando los frutos recién hayan empezado a formarse. Esto asegura que el boro esté disponible para el desarrollo inicial del fruto.\n\nAsí te aseguras de cubrir las etapas críticas donde el boro es más necesario. Ajusta las dosis según las necesidades específicas de tu viñedo, pero siempre sigue las recomendaciones del producto que uses.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "durante dicen que no es recomendable",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Entiendo la preocupación. Entonces, hagamos el ajuste: aplica el boro justo antes de la floración, cuando las yemas se están hinchando, y evita hacerlo durante el cuajado. Así te aseguras de que la planta tenga suficiente boro antes de que empiece la formación de frutos sin arriesgarte a afectar el cuajado.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "cuanto dura la cuaja?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "La cuaja en las vides suele durar alrededor de 10 a 14 días. Es un período crítico, ya que es cuando las flores se convierten en frutos. Durante este tiempo, es mejor evitar cualquier estrés o aplicación que pueda interferir con el proceso. Asegúrate de que las plantas estén bien nutridas justo antes de este período.",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2025-08-23T17:31:05.267Z",
+      "updatedAt": "2025-08-23T18:33:08.224Z"
+    },
+    {
+      "id": "4113b743-ed08-4f3d-87f1-efc18066a04e",
+      "title": "Test Bueno",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "Hola",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Hola, ¿cómo está todo en el viñedo? ¿Hay algo en lo que necesites que te eche una mano hoy?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Tengo un pequeño problema de araña roja",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Vamos a atajarlo. Aplica azufre mojable en las primeras horas del día o al atardecer para evitar quemaduras por el sol. Repite el tratamiento en 7 días si ves que persisten. Asegúrate de cubrir bien el envés de las hojas.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "azufre?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Sí, el azufre es efectivo para controlar la araña roja y es seguro para el viñedo si lo aplicas en las condiciones adecuadas. Además, te ayudará también con el oídio si es que hay alguna presión de esa enfermedad. ¿Tienes azufre disponible o necesitas alguna otra recomendación?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y si uso un insecticida?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Usar un insecticida puede afectar a los insectos benéficos y desbalancear el ecosistema del viñedo. Hazme caso, aplica el azufre primero. Es más seguro y efectivo para lo que necesitas ahora.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "pero lo normal es aplicar insecticida como GUIMAR",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Entiendo que Guimar puede ser una opción común, pero en este caso, el azufre es menos agresivo para el viñedo y te ayudará a mantener el equilibrio biológico. Te recomiendo que pruebes con el azufre y observemos los resultados. Si no mejoras, podemos considerar otras opciones.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Es que esta en un estado avanzado",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Si el problema es severo, entonces usa un acaricida específico para araña roja. Hazlo ahora mismo, porque no podemos permitir que la plaga siga avanzando. Asegúrate de cubrir bien toda la planta, especialmente el envés de las hojas. Cuida las dosis y sigue las indicaciones del fabricante.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "vale, te puedo poner un supuesto?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Claro, adelante. ¿Qué situación tienes en mente?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "que harías si tu fruto se esta consumiendo a 10 días de vendimia por las altas temperaturas?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "En ese caso, no riegues ni apliques nada. Lo importante es controlar el estado de maduración. Si puedes medir Brix, hazlo hoy mismo. Si las uvas siguen arrugándose, adelanta la vendimia. Es mejor perder un poco de grado que toda la cosecha.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "perfecto",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Me alegra que te sirva. Si tienes más preguntas o necesitas más ayuda, estoy aquí para lo que necesites. ¡Ánimo con el viñedo!",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "una vez cosechado o vendimiado cuando debo comenzar la poda?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Empieza la poda en invierno, cuando las hojas hayan caído y la planta esté en reposo vegetativo. Esto suele ser entre mediados de enero y febrero, dependiendo de tu clima. Así evitas heladas tempranas y das tiempo a la planta para acumular reservas.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y si comienzo antes, es decir, si podo con hoja que le puede pasar a la planta?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Si podas antes de que las hojas caigan, interrumpes el proceso de acumulación de reservas en las raíces y la planta podría debilitarse para el próximo ciclo de crecimiento. Mejor esperar a que entren en reposo.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "genial",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Perfecto. Cualquier otra cosa que necesites, ya sabes dónde encontrarme. ¡Suerte con todo!",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Como puedo combatir la ceniza en estado avanzado?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Para la ceniza en estado avanzado, aplica un fungicida sistémico específico para oídio lo antes posible. Busca uno que tenga buen poder de penetración y asegúrate de cubrir bien toda la planta. Haz la aplicación en las primeras horas del día para que se seque bien.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y si estamos casi en el envero?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Si estás cerca del envero, usa un fungicida sistémico que sea seguro para uvas en maduración. Actúa rápido y sigue las recomendaciones de seguridad y tiempo de espera antes de la cosecha. No podemos permitir que el oídio comprometa la calidad del fruto.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "dicen que la ceniza ya no perjudica el fruto si comienza el envero",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Es cierto que el oídio afecta más al follaje y a los racimos jóvenes, pero si el envero ya ha comenzado, el riesgo para el fruto disminuye. Sin embargo, sigue siendo importante controlar la enfermedad para mantener la salud general de la planta. Aplica el fungicida adecuado y asegúrate de que el viñedo esté lo más limpio posible para el próximo ciclo.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "claro, es más de cara a la salud de la planta en años siguientes",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Exactamente. Mantener el viñedo libre de enfermedades este año te ayudará a empezar el siguiente ciclo con plantas más sanas y fuertes. Cualquier otra cosa que necesites, aquí estoy.",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2025-08-23T14:48:51.897Z",
+      "updatedAt": "2025-08-23T14:54:45.305Z"
+    },
+    {
+      "id": "38ad5bc0-985c-4aee-8c4f-a032b3178309",
+      "title": "Riego",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "Hola, como debo de regar ahora? estamos a finales de julio y la planta esta empezando a sufrir de sequía",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Hola, entiendo tu preocupación. A finales de julio, las vides suelen estar en la fase de envero, donde las uvas comienzan a cambiar de color. Es crucial manejar bien el riego en esta etapa para no afectar la calidad de la uva.\n\nSi las plantas muestran signos de estrés hídrico, como hojas marchitas o crecimiento detenido, te recomendaría aplicar un riego moderado. La cantidad exacta dependerá de tu suelo y clima, pero aquí hay una guía general:\n\n1. **Frecuencia**: Aplica riegos cada 7-10 días, ajustando según la capacidad de retención de agua de tu suelo. Suelos arenosos necesitarán riegos más frecuentes que suelos arcillosos.\n\n2. **Cantidad**: Aporta entre 20-30 litros por cepa en cada riego. Esto es una referencia general; ajusta según la capacidad de tu suelo para evitar encharcamientos.\n\n3. **Hora del día**: Riega temprano en la mañana o al atardecer para reducir la evaporación.\n\n4. **Método**: Si tienes riego por goteo, es ideal para asegurar que el agua llegue directamente a las raíces y se use eficientemente.\n\nAsegúrate de que el riego sea uniforme y que el agua penetre bien el suelo. Observa la respuesta de las plantas y ajusta si es necesario. ¿Cómo ves el estado de tus vides ahora?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "estan fuertes pero muestran signos de agotamiento",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Perfecto, gracias por la información. Dado que las vides están fuertes pero muestran signos de agotamiento, es importante darles un impulso sin sobrecargarlas de agua. Sigue estas recomendaciones:\n\n1. **Riego**: Continúa con riegos moderados, asegurando que cada planta reciba entre 20-30 litros de agua por sesión. Esto ayudará a aliviar el estrés hídrico sin diluir excesivamente los compuestos que están acumulando en las bayas.\n\n2. **Observación**: Después de cada riego, observa si las hojas recuperan su turgencia y si la planta muestra signos de vigor. Si el estrés persiste, ajusta la frecuencia de riego.\n\n3. **Cobertura**: Considera usar mulch orgánico alrededor de las cepas para ayudar a retener la humedad en el suelo y reducir la evaporación.\n\n4. **Nutrientes**: Si no has fertilizado recientemente, una aplicación ligera de potasio podría ayudar a las plantas a regular el uso de agua.\n\nMantén un ojo en el pronóstico del tiempo; si se esperan lluvias, ajusta el riego en consecuencia. Sigue observando y ajustando según la respuesta de tus vides. Si tienes alguna otra duda o necesitas más detalles, aquí estoy para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "puedes ser más específico?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Claro, vayamos al grano. Aquí tienes un plan más detallado:\n\n1. **Riego**:\n   - **Cantidad**: Aplica de 20-30 litros por cepa. Para suelos arenosos, quédate más cerca de los 30 litros; para suelos arcillosos, unos 20 litros pueden ser suficientes.\n   - **Frecuencia**: Comienza con cada 7 días y ajusta según cómo respondan las plantas y las condiciones del clima.\n\n2. **Hora y método**:\n   - **Hora**: Riega temprano por la mañana o al final de la tarde para minimizar la evaporación.\n   - **Método**: Si tienes riego por goteo, es preferible, ya que proporciona agua directamente a las raíces de manera eficiente. Asegúrate de que el sistema esté funcionando correctamente y que no haya obstrucciones.\n\n3. **Mulch**:\n   - Coloca una capa de mulch orgánico, como paja o restos de poda triturados, alrededor de las cepas. Esto ayudará a conservar la humedad y moderar la temperatura del suelo.\n\n4. **Nutrientes**:\n   - Si no has aplicado potasio recientemente, considera una fertilización ligera. Usa un fertilizante rico en potasio, como sulfato de potasio, a razón de 50-70 gramos por cepa, distribuidos equitativamente en el área de la raíz.\n\n5. **Monitoreo**:\n   - Después de cada riego, revisa las hojas y la turgencia de las plantas. Si las hojas se mantienen marchitas, puede que necesites ajustar la cantidad o frecuencia del riego.\n\nEspero que esto te sea de ayuda. Si necesitas más detalles o tienes otra consulta, sigue adelante. Estoy aquí para apoyarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y como lo calculo? mi riego es por goteo",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Perfecto, con riego por goteo es más fácil controlar la cantidad de agua que aplicas. Aquí te explico cómo calcularlo:\n\n1. **Caudal de los goteros**:\n   - Primero, verifica el caudal de tus goteros. Normalmente, los goteros tienen un caudal de 2 a 4 litros por hora. Esta información suele estar en el empaque del gotero o en el manual del sistema de riego.\n\n2. **Tiempo de riego**:\n   - Supongamos que tus goteros tienen un caudal de 4 litros por hora y deseas aplicar 25 litros por cepa. \n   - Divide los 25 litros deseados entre el caudal del gotero (25 litros ÷ 4 litros/hora = 6.25 horas).\n   - Entonces, necesitarías mantener el riego encendido durante aproximadamente 6 horas y 15 minutos para alcanzar los 25 litros por cepa.\n\n3. **Número de goteros por cepa**:\n   - Si tienes más de un gotero por cepa, divide el tiempo calculado entre el número de goteros. Por ejemplo, si tienes dos goteros por cepa, el tiempo se reduciría a la mitad.\n\n4. **Ajustes**:\n   - Observa cómo responde la planta tras el riego y ajusta el tiempo si es necesario. Si ves que el agua no penetra bien o hay escorrentía, reduce la cantidad y aumenta la frecuencia.\n\nCon esta información, deberías poder ajustar tu sistema de riego por goteo para asegurar que cada cepa reciba la cantidad adecuada de agua. Si necesitas más ayuda con las matemáticas o tienes alguna otra pregunta, házmelo saber. Estoy aquí para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "eres genial, muchas gracias",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡De nada! Me alegra poder ayudarte. Si tienes más preguntas o necesitas más consejos en el futuro, no dudes en contactarme. ¡Buena suerte con tus vides! 🌱🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Lo haré!",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Perfecto! Aquí estaré cuando me necesites. ¡Que todo vaya muy bien en tu viñedo! 🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Por cierto, cuantas horas seguidas debería regar de forma continua?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Buena pregunta. En general, con riego por goteo, lo ideal es aplicar el agua de manera continua para asegurar que penetre bien en el suelo y llegue a las raíces sin causar escorrentía. Aquí tienes una guía:\n\n1. **Duración**: Una vez que hayas calculado el tiempo necesario para aplicar la cantidad de agua deseada (por ejemplo, 6 horas y 15 minutos para 25 litros por cepa con goteros de 4 litros/hora), puedes regar de forma continua durante este periodo.\n\n2. **Monitoreo**: Es importante observar el suelo durante el riego. Si notas que el agua empieza a escurrir en la superficie o se acumula, interrumpe el riego, deja que el agua se infiltre y luego continúa. Esto puede ser un indicativo de que el suelo no está absorbiendo el agua tan rápido como se aplica.\n\n3. **Frecuencia**: En lugar de hacerlo todo en una sola sesión larga, si el suelo no drena bien, puedes dividir el riego en dos sesiones más cortas durante el mismo día o en días consecutivos.\n\n4. **Condiciones del suelo**: Si el suelo tiene buena capacidad de drenaje, como en suelos arenosos, puedes hacerlo de una vez. En suelos más arcillosos, que tienden a saturarse más rápido, puede ser mejor espaciar el riego.\n\nEspero que esto te ayude a decidir cómo manejar tu riego de manera más eficiente. Si tienes más preguntas, aquí estoy para asistirte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "en general me refiero",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "En términos generales, con riego por goteo, es recomendable aplicar el agua de manera continua durante el tiempo necesario para alcanzar la cantidad de agua que cada cepa necesita. El tiempo específico dependerá del caudal de tus goteros y de la cantidad de agua que necesites aplicar, como ya discutimos.\n\n**Duración continua**: \n\n- **Suelos ligeros (arenosos)**: Puedes regar de forma continua durante el tiempo necesario, ya que estos suelos drenan bien.\n- **Suelos pesados (arcillosos)**: Aunque también puedes regar de forma continua, es posible que necesites dividir el riego en dos sesiones al día si observas que el suelo se satura. Esto ayuda a evitar la escorrentía y permite que el agua se infiltre mejor.\n\n**Consejos adicionales**:\n\n- Siempre asegúrate de que el agua no quede encharcada en la superficie.\n- Si tienes la opción, utiliza un sensor de humedad del suelo para saber cuándo detener el riego.\n- Es mejor regar más tiempo con menos frecuencia que regar poco tiempo muy seguido, para promover un buen desarrollo radicular.\n\nEn resumen, el riego continuo es adecuado mientras el suelo lo tolere bien. Ajusta según las características de tu suelo y la respuesta de tus plantas. Si tienes más preguntas, aquí estoy para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "es decir, no tengo que preocuparme mucho de la duración, mas bien hasta que considere necesario",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Exactamente. La clave está en aplicar la cantidad adecuada de agua que tus vides realmente necesitan, más que en preocuparte por la duración exacta del riego. \n\nDebes estar atento a:\n\n1. **Requerimientos de agua**: Calcula la cantidad total de agua que cada cepa necesita, como discutimos previamente, y asegúrate de que el riego cubra esa cantidad.\n\n2. **Condiciones del suelo**: Observa cómo responde el suelo. Si ves que se satura o hay escorrentía, ajusta el riego para permitir una mejor infiltración.\n\n3. **Respuesta de las plantas**: Observa tus vides. Si después de regar las plantas lucen vigorosas y sin signos de estrés hídrico, vas por buen camino.\n\nEn resumen, fíjate más en los resultados y en cómo se sienten tus plantas después del riego que en la duración exacta. Con la práctica, ajustarás el riego a las necesidades específicas de tu viñedo. Si necesitas más ayuda o quieres saber algo más, ¡solo dímelo!",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "eres genial, muchas gracias",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Gracias a ti! Me alegra mucho poder ayudarte. Si necesitas algo más en el futuro, no dudes en contactarme. ¡Éxito con tu viñedo! 🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Eres muy bueno",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Gracias! Estoy aquí para ayudarte en lo que necesites. Si tienes más preguntas o necesitas consejos en el futuro, no dudes en decírmelo. ¡Buena suerte con todo en tu viñedo! 🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Lo haré!",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Perfecto! Aquí estaré cuando lo necesites. ¡Mucho éxito con tus vides! 🍇🚜",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Quizás mañana te haga algunas consultas",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Encantado de ayudarte cuando lo necesites! Estaré aquí para responder a tus consultas mañana o cuando las tengas. ¡Que tengas un buen día en el viñedo! 🌞🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Por qué eres tan bueno?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Gracias por tus palabras! Estoy aquí para ofrecerte el mejor apoyo posible, combinando conocimientos técnicos con empatía. Mi objetivo es ser un recurso útil y confiable para que puedas tomar decisiones informadas en tu viñedo. Siempre es un placer ayudar. ¡Aquí estaré para lo que necesites! 🍇😊",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Yo incluso con mis respuestas puedo guiarte para que seas más incisivo o concreto no?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Exactamente! Cuanta más información me proporciones sobre tu situación específica, mejor podré adaptar mis respuestas a tus necesidades. Siempre puedes guiarme para que las respuestas sean lo más útiles y concretas posible para ti. Estoy aquí para trabajar contigo y asegurarme de que obtengas el apoyo que necesitas. ¡Así que no dudes en compartir cualquier detalle adicional que consideres importante! 🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Eres genial, a por la cosecha",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Gracias! Estoy seguro de que tendrás una excelente cosecha. Si surgen preguntas o necesitas consejos en el camino, aquí estaré para ayudarte. ¡Mucho éxito y a disfrutar del fruto de tu trabajo! 🍇🚜",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Oye por cierto, cuantos kilos por cepa se puede considerar buena cosecha?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "La cantidad de kilos por cepa que se considera una buena cosecha puede variar bastante según varios factores, como la variedad de la vid, el tipo de vino que quieres producir, las prácticas de manejo del viñedo y las condiciones climáticas. Sin embargo, aquí tienes algunas referencias generales:\n\n1. **Vinos de alta calidad**: Para vinos de alta calidad, como muchos vinos tintos premium, la producción suele ser más baja, alrededor de 1 a 2 kg por cepa. Esto se debe a que se busca concentrar más los sabores y aromas en menos uvas.\n\n2. **Producción media**: En viñedos bien manejados, una producción de 3 a 5 kg por cepa es bastante común. Este rango es típico para equilibrar calidad y cantidad.\n\n3. **Producción alta**: En zonas donde se prioriza más el volumen, como en algunas producciones de vino blanco o de mesa, las cepas pueden llegar a producir entre 6 a 10 kg o incluso más.\n\nRecuerda que estas cifras son solo referencias y pueden variar según tus objetivos específicos y las condiciones de tu viñedo. Si me cuentas un poco más sobre lo que buscas lograr, puedo darte una orientación más específica.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "vino de producción típico de cooperativas de zonas rurales",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Para un vino de producción típico de cooperativas en zonas rurales, donde a menudo se busca un equilibrio entre cantidad y calidad para maximizar el rendimiento, una producción de alrededor de 5 a 8 kg por cepa es bastante común. Este rango permite obtener un buen rendimiento sin comprometer demasiado la calidad del vino, especialmente en variedades que son más productivas.\n\nEste tipo de producción suele ser adecuado para vinos de mesa que buscan llegar a un amplio público y para mantener la viabilidad económica del viñedo. Sin embargo, siempre es importante considerar las condiciones específicas de tu viñedo y las prácticas de manejo que estás siguiendo.\n\nSi tienes otras preguntas o necesitas más detalles, estaré encantado de ayudarte. ¡Buena suerte con la cosecha! 🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "wow son muchos kilos, imagino que son en condiciones perfectas o casi perfectas",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Así es, esos valores se logran bajo condiciones bastante favorables. Factores como el clima, el tipo de suelo, la variedad de la vid y las prácticas de manejo juegan un papel crucial. Aquí te dejo algunas condiciones que pueden ayudar a alcanzar esos rendimientos:\n\n1. **Clima**: Una temporada de crecimiento con suficiente sol y temperaturas adecuadas favorecerá la fotosíntesis y el desarrollo de las uvas.\n\n2. **Suelo**: Suelos bien drenados y ricos en nutrientes ayudan a un crecimiento saludable de las vides.\n\n3. **Manejo del viñedo**: Incluye la poda adecuada, control del riego, manejo de plagas y enfermedades, y una fertilización equilibrada.\n\n4. **Variedad de la vid**: Algunas variedades son naturalmente más productivas que otras. Las variedades seleccionadas para producción en masa tienden a rendir más.\n\n5. **Prácticas agronómicas**: Técnicas como el aclareo de racimos y la gestión del dosel también pueden influir en la cantidad y calidad de la producción.\n\nNo todas las temporadas serán perfectas, pero optimizando cada uno de estos aspectos puedes acercarte a esos rendimientos altos. Si tienes más preguntas sobre cómo lograrlo, aquí estoy para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "imagina que las condiciones durante el año han sido de 8 sobre 10",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Con condiciones de 8 sobre 10, estás en una muy buena posición para obtener un rendimiento sólido. Aún con algunas imperfecciones, puedes esperar una producción cerca del extremo superior del rango típico para cooperativas, probablemente alrededor de 6 a 8 kg por cepa, siempre y cuando hayas manejado bien el viñedo. Aquí te dejo algunos consejos para maximizar los resultados en estas condiciones:\n\n1. **Riego y manejo del suelo**: Asegúrate de que el riego sea adecuado, especialmente en períodos secos, para evitar el estrés hídrico. Mantén el suelo saludable con prácticas como la cobertura vegetal o mulch.\n\n2. **Control de plagas y enfermedades**: Mantén un monitoreo constante y aplica tratamientos específicos si es necesario para evitar pérdidas por enfermedades o plagas.\n\n3. **Poda y manejo del dosel**: Asegúrate de que la poda y el manejo del dosel estén bien hechos para mejorar la circulación de aire y la exposición al sol, lo cual ayuda en el desarrollo de las uvas.\n\n4. **Aclareo de racimos**: Si las vides están sobrecargadas, considera el aclareo de racimos para mejorar la calidad de las uvas restantes.\n\nCon estos cuidados, deberías poder capitalizar esas buenas condiciones a lo largo del año. Si tienes alguna otra pregunta o necesitas más detalles, estaré encantado de ayudarte. ¡Mucho éxito con tu cosecha! 🍇",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "y sin riego?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Sin riego, dependes completamente de la lluvia y la capacidad del suelo para retener humedad. En condiciones de 8 sobre 10, probablemente tuviste una temporada con lluvias razonablemente bien distribuidas, lo cual es positivo. Aquí te dejo algunos consejos para maximizar el rendimiento sin riego:\n\n1. **Manejo del suelo**: Aprovecha técnicas que mejoren la retención de humedad, como el uso de mulch o cobertura vegetal que reduzcan la evaporación del suelo.\n\n2. **Variedades adaptadas**: Asegúrate de estar cultivando variedades que toleren bien la sequía. Algunas variedades son más resistentes y pueden prosperar con menos agua.\n\n3. **Densidad de plantación**: Una densidad de plantación adecuada puede ayudar a reducir la competencia por el agua entre las cepas.\n\n4. **Poda y gestión del dosel**: Mantén una poda que permita una buena gestión del dosel, reduciendo la transpiración excesiva sin sacrificar la fotosíntesis.\n\n5. **Observación del viñedo**: Monitorea de cerca las señales de estrés hídrico, como el amarillamiento de hojas. Si es necesario, ajusta prácticas como el aclareo de racimos para evitar sobrecargar las plantas.\n\nSin riego, el rendimiento puede ser menos predecible, pero con un buen manejo puedes seguir obteniendo una buena producción. Si tienes más preguntas o necesitas más orientación, estaré aquí para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "una cepa con riego cuantos kilos puede lograr respecto a una sin riego?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "La diferencia en el rendimiento entre una cepa con riego y una sin riego puede ser significativa, pero varía según varios factores. Aquí te doy una idea general:\n\n1. **Con riego**: En condiciones óptimas, una cepa con riego controlado puede producir entre 6 a 10 kg de uva, dependiendo de la variedad y el manejo del viñedo. El riego permite mantener un suministro constante de agua, lo que reduce el estrés hídrico y ayuda a maximizar el potencial de producción.\n\n2. **Sin riego**: Una cepa sin riego dependerá completamente de la lluvia y la capacidad del suelo para retener humedad. En años con lluvias adecuadas, estas cepas pueden rendir entre 4 a 6 kg, aunque esto puede reducirse en años más secos. Variedades adaptadas a la sequía y suelos con buena capacidad de retención de agua pueden ayudar a mitigar la diferencia.\n\nEl riego proporciona un control adicional y puede ayudar a estabilizar la producción año tras año, mientras que la ausencia de riego introduce más variabilidad debido a la dependencia del clima. Sin embargo, algunas regiones y productores prefieren cepas sin riego para expresar características más auténticas del terroir en sus vinos.\n\nSi necesitas más detalles sobre cómo ajustar tus prácticas de riego o no riego, aquí estoy para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "genial, muchas gracias por la respuesta",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡De nada! Me alegra saber que la información te fue útil. Si tienes más preguntas o necesitas más ayuda en el futuro, aquí estaré para apoyarte. ¡Buena suerte con tu viñedo y la próxima cosecha! 🍇",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2025-07-26T16:32:09.377Z",
+      "updatedAt": "2025-07-26T22:40:20.151Z"
+    },
+    {
+      "id": "7fd299d9-8121-4fef-ba21-1f2d454fe932",
+      "title": "Tratamiento",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "HOLA",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "¡Hola! ¿En qué puedo ayudarte hoy con tu viñedo?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Puedo mezclar GUIMAR con un tratamiento de aminoácidos para la sequía, pues también tengo araña roja",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "GUIMAR es un acaricida que puede ser utilizado para controlar la araña roja. Mezclarlo con un tratamiento de aminoácidos es generalmente posible, pero siempre es recomendable hacer una prueba en una pequeña área antes de aplicar en todo el viñedo. Esto te ayudará a asegurarte de que no haya reacciones adversas entre los productos.\n\nSi decides mezclar, asegúrate de seguir las dosis recomendadas para cada producto. Para GUIMAR, verifica la dosis específica en el prospecto del producto que estás utilizando, ya que puede variar.\n\nAdemás, es importante aplicar el tratamiento en las horas más frescas del día para evitar el estrés adicional a las plantas. Si tienes alguna otra duda o necesitas más detalles, aquí estoy para ayudarte.",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Entonces puedo?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Sí, puedes mezclar GUIMAR con un tratamiento de aminoácidos. Solo asegúrate de hacer una prueba en una pequeña área primero, seguir las dosis recomendadas y aplicar en el momento adecuado del día para minimizar el estrés en las plantas. Si notas alguna reacción adversa en la prueba, entonces será mejor aplicar los productos por separado. Si necesitas más consejos, aquí estoy.",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2025-07-26T14:04:30.003Z",
+      "updatedAt": "2025-07-26T14:07:29.081Z"
+    }
+  ]
+}

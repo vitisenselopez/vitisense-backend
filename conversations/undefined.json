@@ -1,0 +1,69 @@
+[
+  {
+    "id": "0bf10a61-a643-4a59-9ab2-e07a5374d041",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:12:57.329Z",
+    "updatedAt": "2025-07-26T11:12:57.329Z"
+  },
+  {
+    "id": "17bcf5b6-58fc-40c9-8396-afa8ba50f9b7",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:12:54.202Z",
+    "updatedAt": "2025-07-26T11:12:54.202Z"
+  },
+  {
+    "id": "4188ddae-f8b0-44d1-865d-0fc464cdb1f9",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:09:20.013Z",
+    "updatedAt": "2025-07-26T11:09:20.013Z"
+  },
+  {
+    "id": "009aeb6a-f8ce-4ac1-aa1b-e67c2781dff3",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:09:13.511Z",
+    "updatedAt": "2025-07-26T11:09:13.511Z"
+  },
+  {
+    "id": "37efb120-7db8-4a22-b593-2aacbd35b062",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:09:13.362Z",
+    "updatedAt": "2025-07-26T11:09:13.362Z"
+  },
+  {
+    "id": "d4b8c6f0-2c0e-4206-945a-c8a8697f6353",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:09:12.996Z",
+    "updatedAt": "2025-07-26T11:09:12.996Z"
+  },
+  {
+    "id": "af0329f1-b869-4262-95a9-f631a63d56d8",
+    "title": "Conversación nueva",
+    "messages": [],
+    "createdAt": "2025-07-26T11:09:12.081Z",
+    "updatedAt": "2025-07-26T11:09:12.081Z"
+  },
+  {
+    "id": "d9aa992f-daff-4ab0-b8f4-1b1c5459efca",
+    "title": "Conversación nueva",
+    "messages": [
+      null
+    ],
+    "createdAt": "2025-07-26T10:58:50.415Z",
+    "updatedAt": "2025-07-26T10:58:50.415Z"
+  },
+  {
+    "id": "b1fad469-4ad8-4def-8af7-ee01df9fa44e",
+    "title": "Conversación nueva",
+    "messages": [
+      null
+    ],
+    "createdAt": "2025-07-26T10:59:02.728Z",
+    "updatedAt": "2025-07-26T10:59:02.728Z"
+  }
+]
