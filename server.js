@@ -28,6 +28,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://vitisense-frontend.vercel.app",
   "https://vitisense.es", // ← cámbialo por tu dominio real si lo usas
+  "https://www.vitisense.es"
 ];
 
 app.use(
