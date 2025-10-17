@@ -32,8 +32,8 @@ router.post('/create-checkout-session', async (req, res) => {
       subscription_data: {
         trial_period_days: 7,
       },
-      success_url: 'http://localhost:5173/',
-      cancel_url: 'http://localhost:5173/',
+      success_url: 'https://www.vitisense.es/login?success=true',
+cancel_url: 'https://www.vitisense.es/',
     });
 
     res.json({ url: session.url });
