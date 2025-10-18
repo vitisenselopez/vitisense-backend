@@ -8,11 +8,12 @@ require("dotenv").config();
 const router = express.Router();
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
-const USERS_FILE = path.join(__dirname, "../users.json");
+// ⚙️ Ajusta la ruta a donde realmente guardas los usuarios
+const USERS_FILE = path.join(__dirname, "../data/users.json");
 
 // Stripe requiere el body **sin parsear** para verificar la firma
 router.post(
-  "/", // Esto está bien, porque ya viene montado desde /api/stripe/webhook
+  "/", // Esto está bien porque ya viene montado desde /api/webhook
   express.raw({ type: "application/json" }),
   async (req, res) => {
     const sig = req.headers["stripe-signature"];
@@ -30,7 +31,6 @@ router.post(
     // ✅ Gestionar eventos concretos
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-
       const customerEmail = session.customer_email;
       const customerId = session.customer;
 
@@ -40,9 +40,11 @@ router.post(
 
         if (userIndex !== -1) {
           users[userIndex].stripeCustomerId = customerId;
+          users[userIndex].subscriptionActive = true;
+          users[userIndex].pending = false; // ✅ Activa el usuario
 
           fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-          console.log(`✅ Usuario actualizado con stripeCustomerId: ${customerId}`);
+          console.log(`✅ Usuario activado tras pago: ${customerEmail}`);
         } else {
           console.warn(`⚠️ Usuario con email ${customerEmail} no encontrado`);
         }
@@ -51,6 +53,7 @@ router.post(
       }
     }
 
+    // Stripe necesita una respuesta para confirmar recepción
     res.json({ received: true });
   }
 );

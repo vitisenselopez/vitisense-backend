@@ -33,7 +33,14 @@ router.post("/register", (req, res) => {
   const userExists = users.find((u) => u.email === email);
   if (userExists) return res.status(409).json({ error: "El usuario ya existe" });
 
-  const newUser = { email, password };
+  const newUser = {
+    email,
+    password,
+    stripeCustomerId: null,
+    subscriptionActive: false,
+    pending: true, // ✅ Solo se activa si completa pago en Stripe
+  };
+
   users.push(newUser);
   saveUsers(users);
 
@@ -51,6 +58,10 @@ router.post("/login", (req, res) => {
   const user = users.find((u) => u.email === email && u.password === password);
   if (!user) {
     return res.status(401).json({ error: "Credenciales inválidas" });
+  }
+
+  if (user.pending) {
+    return res.status(403).json({ error: "Debes completar el pago para acceder." }); // ✅ Bloqueo
   }
 
   const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
