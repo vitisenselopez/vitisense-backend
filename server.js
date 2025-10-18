@@ -28,7 +28,7 @@ app.use(cors({
 
 // ✅ Ruta Webhook Stripe (debe ir ANTES de bodyParser)
 const webhookRoutes = require('./routes/webhook');
-app.use('/api/webhook', webhookRoutes); // ⚠️ ESTA es la ruta real que usa Stripe
+app.use('/api/stripe/webhook', webhookRoutes); // ⚠️ ESTA es la ruta real que usa Stripe
 
 // ✅ body-parser (después del webhook)
 app.use(bodyParser.json());
