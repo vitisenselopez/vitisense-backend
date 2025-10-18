@@ -12,7 +12,7 @@ const USERS_FILE = path.join(__dirname, "../users.json");
 
 // Stripe requiere el body **sin parsear** para verificar la firma
 router.post(
-  "/webhook",
+  "/", // ✅ AQUÍ: quitar "/webhook"
   express.raw({ type: "application/json" }),
   async (req, res) => {
     const sig = req.headers["stripe-signature"];
