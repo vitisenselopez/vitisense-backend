@@ -2,10 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { OpenAI } = require('openai');
+const webhookRoutes = require('./routes/webhook'); // ✅ IMPORTACIÓN ANTES DEL bodyParser
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3010; // Render usa su propio puerto
+const PORT = process.env.PORT || 3010;
 
 // ✅ CORS para desarrollo y producción
 const allowedOrigins = [
@@ -26,6 +27,10 @@ app.use(cors({
   credentials: true,
 }));
 
+// ✅ Ruta de Webhook de Stripe (DEBE estar antes del bodyParser.json)
+app.use('/api/stripe/webhook', webhookRoutes);
+
+// ✅ body-parser (después del webhook)
 app.use(bodyParser.json());
 
 // ✅ Rutas
@@ -76,7 +81,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
-// ✅ Iniciar servidor (PORT dinámico en producción)
+// ✅ Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend escuchando en http://localhost:${PORT}`);
 });

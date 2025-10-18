@@ -1,63 +1,59 @@
+// backend/routes/webhook.js
 const express = require("express");
-const router = express.Router();
 const fs = require("fs");
 const path = require("path");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const Stripe = require("stripe");
+require("dotenv").config();
 
-const USERS_FILE = path.join(__dirname, "../data/users.json");
+const router = express.Router();
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Función para cargar usuarios
-function loadUsers() {
-  try {
-    const data = fs.readFileSync(USERS_FILE, "utf8");
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
+const USERS_FILE = path.join(__dirname, "../users.json");
 
-// Función para guardar usuario tras pago
-function saveUser(email) {
-  const users = loadUsers();
-  if (users.find((u) => u.email === email)) {
-    console.log(`ℹ️ Usuario ${email} ya existe, no se duplica.`);
-    return;
-  }
+// Stripe requiere el body **sin parsear** para verificar la firma
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    const sig = req.headers["stripe-signature"];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  users.push({ email, password: null, isActive: true });
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-  console.log(`✅ Usuario creado tras pago exitoso: ${email}`);
-}
+    let event;
 
-// Ruta del webhook
-router.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
-  const sig = req.headers["stripe-signature"];
-
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    console.error("❌ Error verificando firma del webhook:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Procesar el evento de pago completado
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const email = session.customer_email || session.client_reference_id;
-
-    if (email) {
-      saveUser(email);
-    } else {
-      console.warn("⚠️ No se pudo guardar usuario: email no encontrado en la sesión.");
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+      console.error("❌ Error verificando firma del webhook:", err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
     }
-  }
 
-  res.status(200).send("Webhook recibido");
-});
+    // ✅ Gestionar eventos concretos
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+
+      const customerEmail = session.customer_email;
+      const customerId = session.customer;
+
+      try {
+        const users = JSON.parse(fs.readFileSync(USERS_FILE, "utf-8"));
+        const userIndex = users.findIndex((u) => u.email === customerEmail);
+
+        if (userIndex !== -1) {
+          users[userIndex].stripeCustomerId = customerId;
+
+          fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+          console.log(`✅ Usuario actualizado con stripeCustomerId: ${customerId}`);
+        } else {
+          console.warn(`⚠️ Usuario con email ${customerEmail} no encontrado`);
+        }
+      } catch (err) {
+        console.error("❌ Error actualizando users.json:", err);
+      }
+    }
+
+    // Responder a Stripe que todo OK
+    res.json({ received: true });
+  }
+);
 
 module.exports = router;
