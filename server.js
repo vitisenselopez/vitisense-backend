@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { OpenAI } = require('openai');
-const webhookRoutes = require('./routes/webhook'); // ✅ IMPORTACIÓN ANTES DEL bodyParser
 require('dotenv').config();
 
 const app = express();
@@ -27,13 +26,14 @@ app.use(cors({
   credentials: true,
 }));
 
-// ✅ Ruta de Webhook de Stripe (DEBE estar antes del bodyParser.json)
-app.use('/api/stripe/webhook', webhookRoutes);
+// ✅ Ruta Webhook Stripe (debe ir ANTES de bodyParser)
+const webhookRoutes = require('./routes/webhook');
+app.use('/api/webhook', webhookRoutes); // ⚠️ ESTA es la ruta real que usa Stripe
 
 // ✅ body-parser (después del webhook)
 app.use(bodyParser.json());
 
-// ✅ Rutas
+// ✅ Otras rutas
 const authRoutes = require('./routes/auth');
 const conversationsRoutes = require('./routes/conversations');
 const stripeRoutes = require('./routes/stripe');
