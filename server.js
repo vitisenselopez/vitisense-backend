@@ -37,6 +37,8 @@ app.use(bodyParser.json());
 const authRoutes = require('./routes/auth');
 const conversationsRoutes = require('./routes/conversations');
 const stripeRoutes = require('./routes/stripe');
+const messagesRoutes = require('./routes/message');
+app.use('/api/messages', messagesRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/conversations', conversationsRoutes);
