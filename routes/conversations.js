@@ -4,25 +4,25 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const router = express.Router();
 
-const conversationsPath = process.env.CONVERSATIONS_PATH || path.join(__dirname, "..", "conversations");
+// 🔧 Helpers dinámicos basados en la ruta establecida en server.js
+const getConversationsPath = (req) => req.app.get("conversationsDir");
+const getUserFile = (req, email) => path.join(getConversationsPath(req), `${email}.json`);
 
-const getUserFile = (email) => path.join(conversationsPath, `${email}.json`);
-
-const loadConversations = (email) => {
-  const filePath = getUserFile(email);
+const loadConversations = (req, email) => {
+  const filePath = getUserFile(req, email);
   if (!fs.existsSync(filePath)) return { conversations: [] };
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 };
 
-const saveConversations = (email, conversations) => {
-  const filePath = getUserFile(email);
+const saveConversations = (req, email, conversations) => {
+  const filePath = getUserFile(req, email);
   fs.writeFileSync(filePath, JSON.stringify({ conversations }, null, 2));
 };
 
-// GET todas las conversaciones de un usuario
+// ✅ GET todas las conversaciones de un usuario
 router.get("/:email", (req, res) => {
   try {
-    const conversations = loadConversations(req.params.email);
+    const conversations = loadConversations(req, req.params.email);
     res.json(conversations); // { conversations: [...] }
   } catch (err) {
     console.error("❌ Error al leer conversaciones:", err);
@@ -30,11 +30,11 @@ router.get("/:email", (req, res) => {
   }
 });
 
-// POST nueva conversación vacía
+// ✅ POST nueva conversación vacía
 router.post("/", (req, res) => {
   try {
     const { email } = req.body;
-    const all = loadConversations(email);
+    const all = loadConversations(req, email);
     const newConversation = {
       id: uuidv4(),
       title: "Conversación nueva",
@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
       updatedAt: new Date().toISOString(),
     };
     all.conversations.unshift(newConversation);
-    saveConversations(email, all.conversations);
+    saveConversations(req, email, all.conversations);
     res.json({ conversation: newConversation });
   } catch (err) {
     console.error("❌ Error al crear conversación:", err);
@@ -51,17 +51,17 @@ router.post("/", (req, res) => {
   }
 });
 
-// PUT añadir mensajes
+// ✅ PUT añadir mensajes
 router.put("/:email/:id", (req, res) => {
   try {
     const { email, id } = req.params;
     const { messages } = req.body;
-    const all = loadConversations(email);
+    const all = loadConversations(req, email);
     const conv = all.conversations.find((c) => c.id === id);
     if (!conv) return res.status(404).json({ error: "No encontrada" });
     conv.messages = messages;
     conv.updatedAt = new Date().toISOString();
-    saveConversations(email, all.conversations);
+    saveConversations(req, email, all.conversations);
     res.json({ conversation: conv });
   } catch (err) {
     console.error("❌ Error al actualizar conversación:", err);
@@ -69,16 +69,16 @@ router.put("/:email/:id", (req, res) => {
   }
 });
 
-// PUT cambiar título
+// ✅ PUT cambiar título
 router.put("/:email/:id/title", (req, res) => {
   try {
     const { email, id } = req.params;
     const { newTitle } = req.body;
-    const all = loadConversations(email);
+    const all = loadConversations(req, email);
     const conv = all.conversations.find((c) => c.id === id);
     if (!conv) return res.status(404).json({ error: "No encontrada" });
     conv.title = newTitle;
-    saveConversations(email, all.conversations);
+    saveConversations(req, email, all.conversations);
     res.json({ conversation: conv });
   } catch (err) {
     console.error("❌ Error al editar título:", err);
@@ -86,16 +86,13 @@ router.put("/:email/:id/title", (req, res) => {
   }
 });
 
-// DELETE conversación
+// ✅ DELETE conversación
 router.delete("/:email/:id", (req, res) => {
   try {
     const { email, id } = req.params;
-    const all = loadConversations(email); // { conversations: [...] }
-
+    const all = loadConversations(req, email);
     const updatedConversations = all.conversations.filter((c) => c.id !== id);
-
-    saveConversations(email, updatedConversations); // ✅ correcto
-
+    saveConversations(req, email, updatedConversations);
     res.json({ success: true });
   } catch (err) {
     console.error("❌ Error al borrar conversación:", err);
