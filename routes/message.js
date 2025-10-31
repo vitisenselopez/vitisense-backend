@@ -1,18 +1,21 @@
-// backend/routes/message.js
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { OpenAI } = require("openai");
+const cloudinary = require("cloudinary").v2;
 
 const router = express.Router();
-const uploadDir = path.join(__dirname, "..", "uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
+// Configurar Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+// Configurar multer (sin carpeta local, se borra tras subir)
+const storage = multer.memoryStorage(); // 👈 usamos memoria temporal
 const upload = multer({ storage });
 
 const promptPath = path.join(__dirname, "..", "prompts", "vitisense-system.txt");
@@ -29,11 +32,22 @@ router.post("/", upload.single("image"), async (req, res) => {
     const text = req.body.text || "";
     const rawHistory = req.body.history || "[]";
     const history = JSON.parse(rawHistory);
-    const imageUrl = req.file
-      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-      : null;
 
-    // Montar mensajes para OpenAI
+    let imageUrl = null;
+
+    // Si hay imagen, subir a Cloudinary
+    if (req.file) {
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+      const uploadResult = await cloudinary.uploader.upload(base64Image, {
+        folder: "vitisense_chat",
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true,
+      });
+      imageUrl = uploadResult.secure_url;
+    }
+
+    // Construir mensajes para OpenAI
     const messages = [
       systemPrompt,
       ...history.map((msg) => ({
@@ -42,7 +56,6 @@ router.post("/", upload.single("image"), async (req, res) => {
       })),
     ];
 
-    // Añadir mensaje actual (texto + imagen)
     if (imageUrl) {
       messages.push({
         role: "user",
@@ -63,6 +76,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     });
 
     const answer = completion.choices[0].message.content;
+
     res.json({ success: true, response: answer, imageUrl: imageUrl || null });
   } catch (err) {
     console.error("❌ Error en /api/messages:", err);
