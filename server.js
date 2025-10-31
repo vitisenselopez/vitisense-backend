@@ -11,7 +11,9 @@ const PORT = process.env.PORT || 3010;
 
 // ✅ Configurar carpeta persistente de conversaciones (Render vs Local)
 const isProduction = process.env.NODE_ENV === 'production';
-const conversationsDir = path.join(__dirname, 'data', 'conversations');
+const conversationsDir = process.env.NODE_ENV === 'production'
+  ? '/mnt/data/conversations'
+  : path.join(__dirname, 'data', 'conversations');
 
 // Crear carpeta de conversaciones si no existe
 if (!fs.existsSync(conversationsDir)) {
