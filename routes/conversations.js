@@ -4,7 +4,7 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const router = express.Router();
 
-const conversationsPath = path.join(__dirname, "..", "conversations");
+const conversationsPath = process.env.CONVERSATIONS_PATH || path.join(__dirname, "..", "conversations");
 
 const getUserFile = (email) => path.join(conversationsPath, `${email}.json`);
 
