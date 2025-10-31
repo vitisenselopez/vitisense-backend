@@ -1,4 +1,3 @@
-// backend/routes/conversations.js
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -8,11 +7,13 @@ const router = express.Router();
 const conversationsPath = path.join(__dirname, "..", "conversations");
 
 const getUserFile = (email) => path.join(conversationsPath, `${email}.json`);
+
 const loadConversations = (email) => {
   const filePath = getUserFile(email);
   if (!fs.existsSync(filePath)) return { conversations: [] };
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 };
+
 const saveConversations = (email, conversations) => {
   const filePath = getUserFile(email);
   fs.writeFileSync(filePath, JSON.stringify({ conversations }, null, 2));
@@ -89,9 +90,12 @@ router.put("/:email/:id/title", (req, res) => {
 router.delete("/:email/:id", (req, res) => {
   try {
     const { email, id } = req.params;
-    let all = loadConversations(email);
-    all.conversations = all.conversations.filter((c) => c.id !== id);
-    saveConversations(email, all.conversations);
+    const all = loadConversations(email); // { conversations: [...] }
+
+    const updatedConversations = all.conversations.filter((c) => c.id !== id);
+
+    saveConversations(email, updatedConversations); // ✅ correcto
+
     res.json({ success: true });
   } catch (err) {
     console.error("❌ Error al borrar conversación:", err);
