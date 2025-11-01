@@ -5,6 +5,7 @@ const path = require("path");
 
 const router = express.Router();
 const USERS_FILE = path.join(__dirname, "../data/users.json");
+const CANCEL_FILE = path.join(__dirname, "../data/cancel_requests.json");
 
 function loadUsers() {
   try {
@@ -15,13 +16,12 @@ function loadUsers() {
   }
 }
 
-// 🟢 REGISTRO — NO guarda usuario todavía
+// 🟢 REGISTRO
 router.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ error: "Faltan campos obligatorios." });
 
-  // Solo verificamos si el email ya fue activado tras pago
   const users = loadUsers();
   const alreadyPaid = users.find(
     (u) => u.email === email && u.subscriptionActive === true
@@ -30,8 +30,6 @@ router.post("/register", (req, res) => {
   if (alreadyPaid)
     return res.status(409).json({ error: "El usuario ya existe y está activo." });
 
-  // ✅ NO guardamos nada todavía
-  // Stripe se encargará de crear al usuario en el webhook cuando pague
   const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
   return res.json({
     message: "Usuario provisional creado. Completa el pago para activar tu cuenta.",
@@ -78,10 +76,7 @@ router.get("/me", (req, res) => {
   }
 });
 
-module.exports = router;
-
-const CANCEL_FILE = path.join(__dirname, "../data/cancel_requests.json");
-
+// 🟠 CANCELACIÓN DE SUSCRIPCIÓN
 router.post("/user", (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader)
@@ -121,33 +116,6 @@ router.post("/user", (req, res) => {
     console.error("❌ Error guardando cancelación:", err);
     return res.status(500).json({ error: "Error al guardar la solicitud." });
   }
-
-  // 🟠 CANCELACIÓN DE SUSCRIPCIÓN
-router.post("/user", (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: "No autorizado" });
-
-  const token = authHeader.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.email;
-    const { message } = req.body;
-
-    // Guardamos la solicitud en un archivo local
-    const cancelFile = path.join(__dirname, "../data/cancel_requests.json");
-
-    const current = fs.existsSync(cancelFile)
-      ? JSON.parse(fs.readFileSync(cancelFile, "utf8"))
-      : [];
-
-    current.push({ email, message, date: new Date().toISOString() });
-
-    fs.writeFileSync(cancelFile, JSON.stringify(current, null, 2));
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ Error al procesar cancelación:", err);
-    res.status(400).json({ error: "Token inválido o fallo interno." });
-  }
 });
-});
+
+module.exports = router;
