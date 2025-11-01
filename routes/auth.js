@@ -79,3 +79,46 @@ router.get("/me", (req, res) => {
 });
 
 module.exports = router;
+
+const CANCEL_FILE = path.join(__dirname, "../data/cancel_requests.json");
+
+router.post("/user", (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader)
+    return res.status(401).json({ error: "Token no proporcionado." });
+
+  const token = authHeader.split(" ")[1];
+  let email;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    email = decoded.email;
+  } catch {
+    return res.status(401).json({ error: "Token inválido." });
+  }
+
+  const { message } = req.body;
+  if (!message)
+    return res.status(400).json({ error: "Falta el mensaje de cancelación." });
+
+  const cancelRequest = {
+    email,
+    message,
+    date: new Date().toISOString(),
+  };
+
+  try {
+    const existing = fs.existsSync(CANCEL_FILE)
+      ? JSON.parse(fs.readFileSync(CANCEL_FILE, "utf8"))
+      : [];
+
+    existing.push(cancelRequest);
+
+    fs.writeFileSync(CANCEL_FILE, JSON.stringify(existing, null, 2), "utf8");
+
+    return res.status(200).json({ message: "Solicitud de cancelación guardada." });
+  } catch (err) {
+    console.error("❌ Error guardando cancelación:", err);
+    return res.status(500).json({ error: "Error al guardar la solicitud." });
+  }
+});
