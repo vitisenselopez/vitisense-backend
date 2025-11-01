@@ -121,4 +121,33 @@ router.post("/user", (req, res) => {
     console.error("❌ Error guardando cancelación:", err);
     return res.status(500).json({ error: "Error al guardar la solicitud." });
   }
+
+  // 🟠 CANCELACIÓN DE SUSCRIPCIÓN
+router.post("/user", (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "No autorizado" });
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const { message } = req.body;
+
+    // Guardamos la solicitud en un archivo local
+    const cancelFile = path.join(__dirname, "../data/cancel_requests.json");
+
+    const current = fs.existsSync(cancelFile)
+      ? JSON.parse(fs.readFileSync(cancelFile, "utf8"))
+      : [];
+
+    current.push({ email, message, date: new Date().toISOString() });
+
+    fs.writeFileSync(cancelFile, JSON.stringify(current, null, 2));
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ Error al procesar cancelación:", err);
+    res.status(400).json({ error: "Token inválido o fallo interno." });
+  }
+});
 });
