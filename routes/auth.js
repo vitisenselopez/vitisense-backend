@@ -15,13 +15,19 @@ function loadUsers() {
   }
 }
 
-// 🟢 REGISTRO — NO guarda usuario todavía
+function saveUsers(users) {
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+// 🟢 REGISTRO — Guarda usuario provisional con contraseña
 router.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ error: "Faltan campos obligatorios." });
 
   const users = loadUsers();
+
+  // Verificamos si ya está registrado y activo
   const alreadyPaid = users.find(
     (u) => u.email === email && u.subscriptionActive === true
   );
@@ -29,7 +35,20 @@ router.post("/register", (req, res) => {
   if (alreadyPaid)
     return res.status(409).json({ error: "El usuario ya existe y está activo." });
 
-  // ✅ Incluimos también la contraseña en el token
+  // Si el usuario no está registrado, lo guardamos provisionalmente
+  const existing = users.find((u) => u.email === email);
+  if (!existing) {
+    users.push({
+      email,
+      password,
+      subscriptionActive: false,
+      pending: true,
+    });
+    saveUsers(users);
+    console.log(`🟡 Usuario provisional guardado: ${email}`);
+  }
+
+  // Generamos token provisional
   const token = jwt.sign({ email, password }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
