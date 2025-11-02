@@ -7,12 +7,26 @@ require("dotenv").config();
 
 const router = express.Router();
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-
 const USERS_FILE = path.join(__dirname, "../data/users.json");
 
-// Stripe requiere el body **sin parsear** para verificar la firma
+// Función auxiliar para leer usuarios
+function loadUsers() {
+  try {
+    const data = fs.readFileSync(USERS_FILE, "utf8");
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
+
+// Función auxiliar para guardar usuarios
+function saveUsers(users) {
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+// Webhook sin parsear (Stripe requiere raw)
 router.post(
-  "/", // Montado desde /api/webhook en server.js
+  "/", // Montado en /api/webhook
   express.raw({ type: "application/json" }),
   async (req, res) => {
     const sig = req.headers["stripe-signature"];
@@ -26,48 +40,81 @@ router.post(
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // 🟢 Evento: pago completado
+    // 🟢 Evento: checkout.session.completed
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const customerEmail = session.customer_email;
       const customerId = session.customer;
 
+      if (!customerEmail) {
+        console.error("❌ No se recibió email del cliente en la sesión.");
+        return res.status(400).json({ error: "No se recibió email del cliente." });
+      }
+
       try {
-        // Leer archivo de usuarios
-        const users = fs.existsSync(USERS_FILE)
-          ? JSON.parse(fs.readFileSync(USERS_FILE, "utf-8"))
-          : [];
+        const users = loadUsers();
+        const existingIndex = users.findIndex(u => u.email === customerEmail);
 
-        const existingUserIndex = users.findIndex(
-          (u) => u.email === customerEmail
-        );
-
-        if (existingUserIndex !== -1) {
-          // 🔄 Actualizar usuario existente
-          users[existingUserIndex].stripeCustomerId = customerId;
-          users[existingUserIndex].subscriptionActive = true;
-          users[existingUserIndex].pending = false;
-          console.log(`✅ Usuario actualizado: ${customerEmail}`);
+        if (existingIndex !== -1) {
+          users[existingIndex].stripeCustomerId = customerId;
+          users[existingIndex].subscriptionActive = true;
+          users[existingIndex].pending = false;
+          console.log(`🔄 Usuario actualizado: ${customerEmail}`);
         } else {
-          // 🆕 Crear usuario nuevo (solo si pago exitoso)
           users.push({
             email: customerEmail,
-            password: null, // opcional, puede eliminarse
+            password: null,
             stripeCustomerId: customerId,
             subscriptionActive: true,
             pending: false,
           });
-          console.log(`✅ Usuario creado tras pago: ${customerEmail}`);
+          console.log(`🆕 Usuario creado tras pago: ${customerEmail}`);
         }
 
-        // Guardar cambios
-        fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+        saveUsers(users);
       } catch (err) {
         console.error("❌ Error al guardar usuario tras pago:", err);
       }
     }
 
-    // Stripe necesita esta respuesta para confirmar recepción
+    // 🔄 (Opcional) Soporte para customer.subscription.created (por seguridad)
+    if (event.type === "customer.subscription.created") {
+      const subscription = event.data.object;
+      const customerId = subscription.customer;
+
+      try {
+        // Obtener el email a partir del ID de cliente
+        const customer = await stripe.customers.retrieve(customerId);
+        const customerEmail = customer.email;
+
+        if (!customerEmail) return res.json({ received: true });
+
+        const users = loadUsers();
+        const existingIndex = users.findIndex(u => u.email === customerEmail);
+
+        if (existingIndex !== -1) {
+          users[existingIndex].stripeCustomerId = customerId;
+          users[existingIndex].subscriptionActive = true;
+          users[existingIndex].pending = false;
+          console.log(`🔄 Usuario actualizado desde subscription.created: ${customerEmail}`);
+        } else {
+          users.push({
+            email: customerEmail,
+            password: null,
+            stripeCustomerId: customerId,
+            subscriptionActive: true,
+            pending: false,
+          });
+          console.log(`🆕 Usuario creado desde subscription.created: ${customerEmail}`);
+        }
+
+        saveUsers(users);
+      } catch (err) {
+        console.error("❌ Error manejando customer.subscription.created:", err);
+      }
+    }
+
+    // Confirmación para Stripe
     res.json({ received: true });
   }
 );
