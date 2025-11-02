@@ -21,7 +21,6 @@ router.post("/register", (req, res) => {
   if (!email || !password)
     return res.status(400).json({ error: "Faltan campos obligatorios." });
 
-  // Solo verificamos si el email ya fue activado tras pago
   const users = loadUsers();
   const alreadyPaid = users.find(
     (u) => u.email === email && u.subscriptionActive === true
@@ -30,9 +29,11 @@ router.post("/register", (req, res) => {
   if (alreadyPaid)
     return res.status(409).json({ error: "El usuario ya existe y está activo." });
 
-  // ✅ NO guardamos nada todavía
-  // Stripe se encargará de crear al usuario en el webhook cuando pague
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  // ✅ Incluimos también la contraseña en el token
+  const token = jwt.sign({ email, password }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
   return res.json({
     message: "Usuario provisional creado. Completa el pago para activar tu cuenta.",
     token,
