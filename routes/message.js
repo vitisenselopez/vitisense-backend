@@ -62,7 +62,9 @@ router.post("/", upload.single("image"), async (req, res) => {
     const systemPrompt = {
       role: "system",
       content: fs.readFileSync(promptPath, "utf-8") +
-        (contextoPersonalizado ? `\n\n📓 Cuaderno de campo del agricultor:\n${contextoPersonalizado}` : ""),
+  (contextoPersonalizado
+    ? `\n\n📓 A continuación se incluye el cuaderno de campo del agricultor con sus últimos tratamientos y observaciones. Debes tenerlo en cuenta para todas tus respuestas y actuar como si recordaras esa información. Si el usuario pregunta por el último tratamiento realizado, el más reciente es:\n\n${contextoPersonalizado}\n\n`
+    : ""),
     };
 
     // Si hay imagen, subir a Cloudinary
