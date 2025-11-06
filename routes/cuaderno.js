@@ -4,24 +4,33 @@ const fs = require("fs");
 const path = require("path");
 const authMiddleware = require("../middleware/auth");
 
-const CUADERNO_PATH = path.join(__dirname, "../data/cuadernos.json");
+const CUADERNOS_DIR = path.join(__dirname, "../data/cuadernos");
 
-// 🔧 Asegúrate de que el archivo cuadernos.json exista
-if (!fs.existsSync(CUADERNO_PATH)) {
-  fs.writeFileSync(CUADERNO_PATH, JSON.stringify({}));
+// Crear carpeta si no existe
+if (!fs.existsSync(CUADERNOS_DIR)) {
+  fs.mkdirSync(CUADERNOS_DIR, { recursive: true });
 }
 
-// GET /api/cuaderno – Obtener cuaderno del usuario
+// GET /api/cuaderno – Obtener entradas del cuaderno del usuario
 router.get("/", authMiddleware, (req, res) => {
   const email = req.user.email;
-  const rawData = fs.readFileSync(CUADERNO_PATH);
-  const cuadernos = JSON.parse(rawData);
+  const filePath = path.join(CUADERNOS_DIR, `${email}.json`);
 
-  const cuaderno = cuadernos[email] || [];
-  res.json(cuaderno);
+  if (!fs.existsSync(filePath)) {
+    return res.json([]); // Cuaderno vacío
+  }
+
+  const data = fs.readFileSync(filePath, "utf-8");
+  try {
+    const entries = JSON.parse(data);
+    res.json(entries);
+  } catch (err) {
+    console.error("❌ Error leyendo el cuaderno:", err);
+    res.status(500).json({ error: "Error al leer el cuaderno de campo" });
+  }
 });
 
-// POST /api/cuaderno – Añadir entrada al cuaderno del usuario
+// POST /api/cuaderno – Añadir una nueva entrada al cuaderno
 router.post("/", authMiddleware, (req, res) => {
   const email = req.user.email;
   const { entrada } = req.body;
@@ -30,22 +39,26 @@ router.post("/", authMiddleware, (req, res) => {
     return res.status(400).json({ error: "Entrada vacía" });
   }
 
-  const rawData = fs.readFileSync(CUADERNO_PATH);
-  const cuadernos = JSON.parse(rawData);
+  const filePath = path.join(CUADERNOS_DIR, `${email}.json`);
+
+  let entries = [];
+  if (fs.existsSync(filePath)) {
+    try {
+      entries = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    } catch {
+      entries = [];
+    }
+  }
 
   const nuevaEntrada = {
     fecha: new Date().toISOString(),
     entrada: entrada.trim(),
   };
 
-  if (!cuadernos[email]) {
-    cuadernos[email] = [];
-  }
+  entries.unshift(nuevaEntrada);
 
-  cuadernos[email].unshift(nuevaEntrada); // Añadir al principio
-
-  fs.writeFileSync(CUADERNO_PATH, JSON.stringify(cuadernos, null, 2));
-  res.json(cuadernos[email]);
+  fs.writeFileSync(filePath, JSON.stringify(entries, null, 2));
+  res.json(entries);
 });
 
 module.exports = router;
