@@ -15,24 +15,21 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configurar multer (sin carpeta local, se borra tras subir)
+// Configurar multer (subida en memoria, no en disco)
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 const promptPath = path.join(__dirname, "..", "prompts", "vitisense-system.txt");
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// POST /api/messages (texto + imagen + contexto)
+// POST /api/messages (texto + imagen + cuaderno de campo)
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const text = req.body.text || "";
     const rawHistory = req.body.history || "[]";
     const history = JSON.parse(rawHistory);
 
-    let imageUrl = null;
-
-    // Obtener email desde el token
+    // Autenticación: extraer email del token
     const authHeader = req.headers.authorization;
     if (!authHeader)
       return res.status(401).json({ success: false, message: "Token no proporcionado" });
@@ -46,28 +43,32 @@ router.post("/", upload.single("image"), async (req, res) => {
       return res.status(401).json({ success: false, message: "Token inválido" });
     }
 
-    // Leer cuaderno de campo del usuario
+    // Leer cuaderno de campo (si existe)
     const cuadernoPath = path.join(__dirname, "..", "data", "cuadernos", `${userEmail}.json`);
-    let contextoPersonalizado = "";
+    let cuadernoContexto = "";
+
     if (fs.existsSync(cuadernoPath)) {
       const contenido = JSON.parse(fs.readFileSync(cuadernoPath, "utf-8"));
       if (Array.isArray(contenido) && contenido.length > 0) {
-        contextoPersonalizado = contenido
+        cuadernoContexto = contenido
           .map((e) => `• ${e.fecha}: ${e.entrada}`)
           .join("\n");
       }
     }
 
-    // Construir prompt
+    // Construir systemPrompt con el cuaderno incluido
+    const basePrompt = fs.readFileSync(promptPath, "utf-8");
+    const fullPrompt = cuadernoContexto
+      ? `${basePrompt}\n\n📓 A continuación se incluye el cuaderno de campo del agricultor. Este contiene todas las labores y tratamientos registrados. Tenlo en cuenta como contexto para responder preguntas o hacer recomendaciones:\n\n${cuadernoContexto}`
+      : basePrompt;
+
     const systemPrompt = {
       role: "system",
-      content: fs.readFileSync(promptPath, "utf-8") +
-  (contextoPersonalizado
-    ? `\n\n📓 A continuación se incluye el cuaderno de campo del agricultor con sus últimos tratamientos y observaciones. Debes tenerlo en cuenta para todas tus respuestas y actuar como si recordaras esa información. Si el usuario pregunta por el último tratamiento realizado, el más reciente es:\n\n${contextoPersonalizado}\n\n`
-    : ""),
+      content: fullPrompt,
     };
 
-    // Si hay imagen, subir a Cloudinary
+    // Si hay imagen, subirla a Cloudinary
+    let imageUrl = null;
     if (req.file) {
       const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
       const uploadResult = await cloudinary.uploader.upload(base64Image, {
@@ -79,7 +80,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       imageUrl = uploadResult.secure_url;
     }
 
-    // Construir mensajes para OpenAI
+    // Preparar mensajes para OpenAI
     const messages = [
       systemPrompt,
       ...history.map((msg) => ({
@@ -100,6 +101,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       messages.push({ role: "user", content: text });
     }
 
+    // Consulta a OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages,
