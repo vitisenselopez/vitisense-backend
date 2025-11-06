@@ -9,8 +9,8 @@ const isProduction = process.env.NODE_ENV === "production";
 
 // 📁 Ruta persistente
 const CUADERNOS_DIR = isProduction
-  ? "/mnt/data/cuadernos" // ✅ Disco persistente en Render
-  : path.join(__dirname, "../data/cuadernos"); // Desarrollo local
+  ? "/mnt/data" // ⛔️ No crear subcarpetas aquí
+  : path.join(__dirname, "../data/cuadernos");
 
 // Crear carpeta si no existe
 if (!fs.existsSync(CUADERNOS_DIR)) {
