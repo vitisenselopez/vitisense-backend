@@ -11,17 +11,15 @@ const PORT = process.env.PORT || 3010;
 
 // ✅ Configurar carpeta persistente de conversaciones (Render vs Local)
 const isProduction = process.env.NODE_ENV === 'production';
-const conversationsDir = process.env.NODE_ENV === 'production'
+const conversationsDir = isProduction
   ? '/mnt/data/conversations'
   : path.join(__dirname, 'data', 'conversations');
 
-// Crear carpeta de conversaciones si no existe
 if (!fs.existsSync(conversationsDir)) {
   fs.mkdirSync(conversationsDir, { recursive: true });
   console.log(`📁 Carpeta de conversaciones creada en: ${conversationsDir}`);
 }
 
-// Guardar en variable global accesible por las rutas
 app.set('conversationsDir', conversationsDir);
 
 // ✅ CORS para desarrollo y producción
@@ -33,7 +31,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // Permite curl/Postman
+    if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
@@ -50,16 +48,19 @@ app.use('/api/stripe/webhook', webhookRoutes);
 // ✅ body-parser (después del webhook)
 app.use(bodyParser.json());
 
-// ✅ Otras rutas
+// ✅ Rutas importadas
 const authRoutes = require('./routes/auth');
 const conversationsRoutes = require('./routes/conversations');
 const stripeRoutes = require('./routes/stripe');
 const messagesRoutes = require('./routes/message');
+const cuadernoRoutes = require('./routes/cuaderno'); // 👈 NUEVA RUTA
 
+// ✅ Montar rutas
 app.use('/api/messages', messagesRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/conversations', conversationsRoutes);
 app.use('/api/stripe', stripeRoutes);
+app.use('/api/cuaderno', cuadernoRoutes); // 👈 NUEVA RUTA ACTIVADA
 
 // ✅ Ruta IA (GPT-4o)
 const openai = new OpenAI({
