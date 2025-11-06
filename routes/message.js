@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 const { OpenAI } = require("openai");
 const cloudinary = require("cloudinary").v2;
 
@@ -15,14 +16,10 @@ cloudinary.config({
 });
 
 // Configurar multer (sin carpeta local, se borra tras subir)
-const storage = multer.memoryStorage(); // 👈 usamos memoria temporal
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 const promptPath = path.join(__dirname, "..", "prompts", "vitisense-system.txt");
-const systemPrompt = {
-  role: "system",
-  content: fs.readFileSync(promptPath, "utf-8"),
-};
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -34,6 +31,39 @@ router.post("/", upload.single("image"), async (req, res) => {
     const history = JSON.parse(rawHistory);
 
     let imageUrl = null;
+
+    // Obtener email desde el token
+    const authHeader = req.headers.authorization;
+    if (!authHeader)
+      return res.status(401).json({ success: false, message: "Token no proporcionado" });
+
+    const token = authHeader.split(" ")[1];
+    let userEmail = null;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userEmail = decoded.email;
+    } catch {
+      return res.status(401).json({ success: false, message: "Token inválido" });
+    }
+
+    // Leer cuaderno de campo del usuario
+    const cuadernoPath = path.join(__dirname, "..", "data", "cuadernos", `${userEmail}.json`);
+    let contextoPersonalizado = "";
+    if (fs.existsSync(cuadernoPath)) {
+      const contenido = JSON.parse(fs.readFileSync(cuadernoPath, "utf-8"));
+      if (Array.isArray(contenido) && contenido.length > 0) {
+        contextoPersonalizado = contenido
+          .map((e) => `• ${e.fecha}: ${e.entrada}`)
+          .join("\n");
+      }
+    }
+
+    // Construir prompt
+    const systemPrompt = {
+      role: "system",
+      content: fs.readFileSync(promptPath, "utf-8") +
+        (contextoPersonalizado ? `\n\n📓 Cuaderno de campo del agricultor:\n${contextoPersonalizado}` : ""),
+    };
 
     // Si hay imagen, subir a Cloudinary
     if (req.file) {
