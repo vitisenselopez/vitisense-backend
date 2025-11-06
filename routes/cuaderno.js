@@ -4,27 +4,24 @@ const fs = require("fs");
 const path = require("path");
 const authMiddleware = require("../middleware/auth");
 
-// 🧠 Detectar entorno
 const isProduction = process.env.NODE_ENV === "production";
 
-// ✅ Usar disco persistente en Render
 const CUADERNOS_DIR = isProduction
-  ? "/mnt/data/conversations" // Carpeta persistente en Render
-  : path.join(__dirname, "../data/cuadernos"); // Carpeta local
+  ? "/mnt/data" // No usar subcarpetas en Render
+  : path.join(__dirname, "../data/cuadernos");
 
 // Crear carpeta solo en entorno local
 if (!isProduction && !fs.existsSync(CUADERNOS_DIR)) {
   fs.mkdirSync(CUADERNOS_DIR, { recursive: true });
-  console.log(`📁 Carpeta de cuadernos creada en: ${CUADERNOS_DIR}`);
 }
 
-// GET /api/cuaderno – Obtener entradas del cuaderno del usuario
+// GET /api/cuaderno – Obtener entradas
 router.get("/", authMiddleware, (req, res) => {
   const email = req.user.email;
   const filePath = path.join(CUADERNOS_DIR, `${email}.json`);
 
   if (!fs.existsSync(filePath)) {
-    return res.json([]); // No hay cuaderno aún
+    return res.json([]); // No hay entradas aún
   }
 
   try {
@@ -32,12 +29,12 @@ router.get("/", authMiddleware, (req, res) => {
     const entries = JSON.parse(data);
     return res.json(entries);
   } catch (err) {
-    console.error("❌ Error leyendo el cuaderno:", err);
+    console.error("❌ Error leyendo cuaderno:", err);
     return res.status(500).json({ error: "Error al leer el cuaderno" });
   }
 });
 
-// POST /api/cuaderno – Añadir una nueva entrada
+// POST /api/cuaderno – Guardar nueva entrada
 router.post("/", authMiddleware, (req, res) => {
   const email = req.user.email;
   const { entrada } = req.body;
@@ -54,7 +51,6 @@ router.post("/", authMiddleware, (req, res) => {
       const raw = fs.readFileSync(filePath, "utf-8");
       entries = JSON.parse(raw);
     } catch (err) {
-      console.warn("⚠️ Archivo de cuaderno dañado o vacío, se reinicia.");
       entries = [];
     }
   }
@@ -70,8 +66,8 @@ router.post("/", authMiddleware, (req, res) => {
     fs.writeFileSync(filePath, JSON.stringify(entries, null, 2));
     return res.json(entries);
   } catch (err) {
-    console.error("❌ Error escribiendo cuaderno:", err);
-    return res.status(500).json({ error: "No se pudo guardar la entrada" });
+    console.error("❌ Error guardando entrada:", err);
+    return res.status(500).json({ error: "Error al guardar entrada" });
   }
 });
 
