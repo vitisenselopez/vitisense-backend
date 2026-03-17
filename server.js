@@ -25,15 +25,8 @@ if (!fs.existsSync(conversationsDir)) {
 
 app.set('conversationsDir', conversationsDir);
 
-// ✅ Carpeta para historiales de WhatsApp persistentes
-const whatsappDir = isProduction
-  ? '/mnt/data/whatsapp'
-  : path.join(__dirname, 'data', 'whatsapp');
-
-if (!fs.existsSync(whatsappDir)) {
-  fs.mkdirSync(whatsappDir, { recursive: true });
-  console.log(`📁 Carpeta de sesiones WhatsApp creada en: ${whatsappDir}`);
-}
+// ✅ Historiales WhatsApp — misma carpeta persistente que conversaciones
+const whatsappDir = conversationsDir;
 
 // ✅ CORS
 const allowedOrigins = [
