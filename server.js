@@ -5,6 +5,8 @@ const { OpenAI } = require('openai');
 const fs = require('fs');
 const path = require('path');
 const twilio = require('twilio');
+const axios = require('axios');
+const FormData = require('form-data');
 require('dotenv').config();
 
 const app = express();
@@ -77,13 +79,11 @@ const promptBase = fs.readFileSync(
   'utf-8'
 );
 
-// Prompt para la app web
 const systemPrompt = {
   role: 'system',
   content: promptBase,
 };
 
-// Prompt para WhatsApp — mismo prompt base + instrucciones de formato
 const systemPromptWhatsApp = {
   role: 'system',
   content: `${promptBase}
@@ -118,17 +118,14 @@ function saveUsers(users) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 }
 
-// Comprueba si el número de WhatsApp tiene suscripción activa
 function isSuscrito(numeroWhatsApp) {
   const users = loadUsers();
-  // El número llega como "whatsapp:+34XXXXXXXXX", normalizamos
   const numeroLimpio = numeroWhatsApp.replace('whatsapp:', '');
   return users.some(
     (u) => u.whatsapp === numeroLimpio && u.subscriptionActive === true
   );
 }
 
-// Devuelve las consultas usadas por un número (persiste en users.json)
 function getConsultasUsadas(numeroWhatsApp) {
   const users = loadUsers();
   const numeroLimpio = numeroWhatsApp.replace('whatsapp:', '');
@@ -136,7 +133,6 @@ function getConsultasUsadas(numeroWhatsApp) {
   return entry ? (entry.whatsappConsultas || 0) : 0;
 }
 
-// Incrementa el contador de consultas de un número
 function incrementarConsultas(numeroWhatsApp) {
   const users = loadUsers();
   const numeroLimpio = numeroWhatsApp.replace('whatsapp:', '');
@@ -145,7 +141,6 @@ function incrementarConsultas(numeroWhatsApp) {
   if (entry) {
     entry.whatsappConsultas = (entry.whatsappConsultas || 0) + 1;
   } else {
-    // Usuario nuevo — lo registramos solo con el número
     users.push({
       whatsapp: numeroLimpio,
       whatsappConsultas: 1,
@@ -153,6 +148,50 @@ function incrementarConsultas(numeroWhatsApp) {
     });
   }
   saveUsers(users);
+}
+
+// ✅ ─────────────────────────────────────────────
+//    WHISPER — transcribir audio de WhatsApp
+// ─────────────────────────────────────────────
+
+async function transcribirAudio(mediaUrl) {
+  // Descargar el audio desde Twilio con autenticación básica
+  const audioResponse = await axios.get(mediaUrl, {
+    responseType: 'arraybuffer',
+    auth: {
+      username: process.env.TWILIO_ACCOUNT_SID,
+      password: process.env.TWILIO_AUTH_TOKEN,
+    },
+  });
+
+  // Guardar temporalmente el archivo
+  const tmpPath = path.join('/tmp', `audio_${Date.now()}.ogg`);
+  fs.writeFileSync(tmpPath, audioResponse.data);
+
+  // Enviar a Whisper para transcripción
+  const formData = new FormData();
+  formData.append('file', fs.createReadStream(tmpPath), {
+    filename: 'audio.ogg',
+    contentType: 'audio/ogg',
+  });
+  formData.append('model', 'whisper-1');
+  formData.append('language', 'es');
+
+  const whisperRes = await axios.post(
+    'https://api.openai.com/v1/audio/transcriptions',
+    formData,
+    {
+      headers: {
+        ...formData.getHeaders(),
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+    }
+  );
+
+  // Limpiar archivo temporal
+  fs.unlinkSync(tmpPath);
+
+  return whisperRes.data.text;
 }
 
 // ✅ Ruta IA (GPT-4o) — para la app web
@@ -186,14 +225,12 @@ app.post('/api/ask', async (req, res) => {
 const whatsappSessions = {};
 
 app.post('/webhook/whatsapp', async (req, res) => {
-  const mensajeEntrada = req.body.Body?.trim();
   const numeroUsuario = req.body.From; // formato: whatsapp:+34XXXXXXXXX
+  const mediaUrl = req.body.MediaUrl0; // URL del audio si existe
+  const mediaType = req.body.MediaContentType0; // tipo de archivo
+  let mensajeEntrada = req.body.Body?.trim();
 
-  if (!mensajeEntrada || !numeroUsuario) {
-    return res.sendStatus(400);
-  }
-
-  console.log(`📱 WhatsApp [${numeroUsuario}]: ${mensajeEntrada}`);
+  if (!numeroUsuario) return res.sendStatus(400);
 
   const twilioClient = twilio(
     process.env.TWILIO_ACCOUNT_SID,
@@ -208,13 +245,35 @@ app.post('/webhook/whatsapp', async (req, res) => {
     });
   };
 
-  // ✅ Comprobar si está suscrito — si sí, acceso ilimitado
+  // ✅ Si hay audio, transcribirlo con Whisper
+  if (mediaUrl && mediaType && mediaType.startsWith('audio')) {
+    try {
+      console.log(`🎤 Audio recibido de ${numeroUsuario}, transcribiendo...`);
+      mensajeEntrada = await transcribirAudio(mediaUrl);
+      console.log(`📝 Transcripción: ${mensajeEntrada}`);
+    } catch (err) {
+      console.error('❌ Error transcribiendo audio:', err);
+      await enviarMensaje('No he podido escuchar el audio. ¿Puedes escribirme la consulta?');
+      const twiml = new twilio.twiml.MessagingResponse();
+      res.type('text/xml');
+      return res.send(twiml.toString());
+    }
+  }
+
+  if (!mensajeEntrada) {
+    await enviarMensaje('No he recibido ningún mensaje. ¿Puedes escribirme o enviarme un audio?');
+    const twiml = new twilio.twiml.MessagingResponse();
+    res.type('text/xml');
+    return res.send(twiml.toString());
+  }
+
+  console.log(`📱 WhatsApp [${numeroUsuario}]: ${mensajeEntrada}`);
+
   const suscrito = isSuscrito(numeroUsuario);
 
   if (!suscrito) {
     const consultasUsadas = getConsultasUsadas(numeroUsuario);
 
-    // Límite alcanzado — no responde y manda mensaje de conversión
     if (consultasUsadas >= LIMITE_CONSULTAS) {
       await enviarMensaje(
         `Has usado tus 5 consultas gratuitas de VITISENSE.\n\nPara seguir teniendo a tu agrónomo disponible sin límites, suscríbete en:\nhttps://www.vitisense.es\n\n7 días gratis, sin permanencia.`
@@ -224,15 +283,10 @@ app.post('/webhook/whatsapp', async (req, res) => {
       return res.send(twiml.toString());
     }
 
-    // Incrementar contador antes de responder
     incrementarConsultas(numeroUsuario);
     const consultaActual = consultasUsadas + 1;
 
-    // Inicializar historial si es la primera vez
-    if (!whatsappSessions[numeroUsuario]) {
-      whatsappSessions[numeroUsuario] = [];
-    }
-
+    if (!whatsappSessions[numeroUsuario]) whatsappSessions[numeroUsuario] = [];
     whatsappSessions[numeroUsuario].push({ role: 'user', content: mensajeEntrada });
     const historialReciente = whatsappSessions[numeroUsuario].slice(-10);
 
@@ -245,10 +299,8 @@ app.post('/webhook/whatsapp', async (req, res) => {
       });
 
       let respuesta = completion.choices[0].message.content;
-
       whatsappSessions[numeroUsuario].push({ role: 'assistant', content: respuesta });
 
-      // Aviso en consulta 3 — añadido al final de la respuesta
       if (consultaActual === AVISO_EN_CONSULTA) {
         respuesta += `\n\n---\nLlevas ${consultaActual} de 5 consultas gratuitas. Si quieres acceso ilimitado, entra en vitisense.es — 7 días gratis.`;
       }
@@ -262,11 +314,7 @@ app.post('/webhook/whatsapp', async (req, res) => {
     }
 
   } else {
-    // ✅ Usuario suscrito — acceso ilimitado sin avisos
-    if (!whatsappSessions[numeroUsuario]) {
-      whatsappSessions[numeroUsuario] = [];
-    }
-
+    if (!whatsappSessions[numeroUsuario]) whatsappSessions[numeroUsuario] = [];
     whatsappSessions[numeroUsuario].push({ role: 'user', content: mensajeEntrada });
     const historialReciente = whatsappSessions[numeroUsuario].slice(-10);
 
@@ -289,13 +337,12 @@ app.post('/webhook/whatsapp', async (req, res) => {
     }
   }
 
-  // ✅ Respuesta TwiML vacía — elimina el "OK" automático de Twilio
   const twiml = new twilio.twiml.MessagingResponse();
   res.type('text/xml');
   res.send(twiml.toString());
 });
 
-// ✅ Ruta 404 si no existe ninguna otra
+// ✅ Ruta 404
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
@@ -304,4 +351,5 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor VITISENSE escuchando en http://localhost:${PORT}`);
   console.log(`📱 Webhook WhatsApp disponible en /webhook/whatsapp`);
+  console.log(`🎤 Transcripción de audios con Whisper activada`);
 });
