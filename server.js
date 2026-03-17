@@ -102,7 +102,7 @@ El contenido y criterio técnico deben ser exactamente los mismos que en cualqui
 // ─────────────────────────────────────────────
 
 const USERS_FILE = path.join(__dirname, 'data', 'users.json');
-const LIMITE_CONSULTAS = 5;
+const LIMITE_CONSULTAS = 999; // 🔧 MODO PRUEBAS — cambiar a 5 en producción
 const AVISO_EN_CONSULTA = 3;
 
 function loadUsers() {
