@@ -12,21 +12,22 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3010;
 
-// ✅ Configurar carpeta persistente de conversaciones (Render vs Local)
+// ✅ Carpeta de conversaciones web
 const isProduction = process.env.NODE_ENV === 'production';
 const conversationsDir = isProduction
   ? '/mnt/data/conversations'
   : path.join(__dirname, 'data', 'conversations');
 
 if (!fs.existsSync(conversationsDir)) {
-  fs.mkdirSync(conversationsDir, { recursive: true });
-  console.log(`📁 Carpeta de conversaciones creada en: ${conversationsDir}`);
+  try {
+    fs.mkdirSync(conversationsDir, { recursive: true });
+    console.log(`📁 Carpeta de conversaciones creada en: ${conversationsDir}`);
+  } catch (e) {
+    console.warn(`⚠️ No se pudo crear ${conversationsDir}:`, e.message);
+  }
 }
 
 app.set('conversationsDir', conversationsDir);
-
-// ✅ Historiales WhatsApp — misma carpeta persistente que conversaciones
-const whatsappDir = conversationsDir;
 
 // ✅ CORS
 const allowedOrigins = [
@@ -44,14 +45,14 @@ app.use(cors({
   credentials: true,
 }));
 
-// ✅ Ruta Webhook Stripe (debe ir ANTES de bodyParser)
+// ✅ Stripe webhook ANTES de bodyParser
 const webhookRoutes = require('./routes/webhook');
 app.use('/api/stripe/webhook', webhookRoutes);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// ✅ Rutas importadas
+// ✅ Rutas
 const authRoutes = require('./routes/auth');
 const conversationsRoutes = require('./routes/conversations');
 const stripeRoutes = require('./routes/stripe');
@@ -64,10 +65,10 @@ app.use('/api/conversations', conversationsRoutes);
 app.use('/api/stripe', stripeRoutes);
 app.use('/api/cuaderno', cuadernoRoutes);
 
-// ✅ Cliente OpenAI
+// ✅ OpenAI
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// ✅ Cargar prompt desde archivo — única fuente de verdad
+// ✅ Prompt desde archivo
 const promptBase = fs.readFileSync(
   path.join(__dirname, 'prompts', 'vitisense-system.txt'),
   'utf-8'
@@ -129,27 +130,24 @@ function incrementarConsultas(numeroWhatsApp) {
 }
 
 // ✅ ─────────────────────────────────────────────
-//    HISTORIAL PERSISTENTE POR NÚMERO
+//    HISTORIAL EN MEMORIA — simple y robusto
+//    Se pierde al reiniciar pero nunca falla
 // ─────────────────────────────────────────────
 
-function getHistorialPath(numeroWhatsApp) {
-  const numeroLimpio = numeroWhatsApp.replace('whatsapp:', '').replace('+', '');
-  return path.join(whatsappDir, `${numeroLimpio}.json`);
+const whatsappSessions = {};
+
+function getHistorial(numeroUsuario) {
+  if (!whatsappSessions[numeroUsuario]) {
+    whatsappSessions[numeroUsuario] = [];
+  }
+  return whatsappSessions[numeroUsuario];
 }
 
-function loadHistorial(numeroWhatsApp) {
-  try { return JSON.parse(fs.readFileSync(getHistorialPath(numeroWhatsApp), 'utf8')); }
-  catch { return []; }
-}
-
-function saveHistorial(numeroWhatsApp, historial) {
-  fs.writeFileSync(getHistorialPath(numeroWhatsApp), JSON.stringify(historial.slice(-20), null, 2));
-}
-
-function pushHistorial(numeroWhatsApp, role, content) {
-  const historial = loadHistorial(numeroWhatsApp);
+function addMensaje(numeroUsuario, role, content) {
+  const historial = getHistorial(numeroUsuario);
   historial.push({ role, content });
-  saveHistorial(numeroWhatsApp, historial);
+  // Mantener solo los últimos 20 mensajes
+  if (historial.length > 20) historial.splice(0, historial.length - 20);
   return historial.slice(-10); // Devuelve los últimos 10 para GPT
 }
 
@@ -180,47 +178,17 @@ async function transcribirAudio(mediaUrl) {
 }
 
 // ✅ ─────────────────────────────────────────────
-//    GPT-4o VISION — analizar imagen
+//    DESCARGAR IMAGEN como base64
 // ─────────────────────────────────────────────
 
-async function analizarImagen(mediaUrl, textoUsuario, numeroUsuario) {
+async function descargarImagenBase64(mediaUrl) {
   const imgResponse = await axios.get(mediaUrl, {
     responseType: 'arraybuffer',
     auth: { username: process.env.TWILIO_ACCOUNT_SID, password: process.env.TWILIO_AUTH_TOKEN },
   });
-
   const base64 = Buffer.from(imgResponse.data).toString('base64');
   const mimeType = imgResponse.headers['content-type'] || 'image/jpeg';
-
-  // Cargar historial previo para mantener contexto de la conversación
-  const historialPrevio = loadHistorial(numeroUsuario).slice(-8);
-
-  // Si el usuario no mandó texto junto a la imagen, VITISENSE pregunta qué quiere saber
-  const textoConsulta = textoUsuario ||
-    '¿Qué ves en esta imagen? Descríbelo y dime qué quieres que analice.';
-
-  const mensajeImagen = {
-    role: 'user',
-    content: [
-      { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
-      { type: 'text', text: textoConsulta },
-    ],
-  };
-
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [systemPromptWhatsApp, ...historialPrevio, mensajeImagen],
-    temperature: 0.7,
-    max_tokens: 1000,
-  });
-
-  const respuesta = completion.choices[0].message.content;
-
-  // Guardar en historial como texto para no romper el contexto
-  pushHistorial(numeroUsuario, 'user', `[Imagen] ${textoConsulta}`);
-  pushHistorial(numeroUsuario, 'assistant', respuesta);
-
-  return respuesta;
+  return { base64, mimeType };
 }
 
 // ✅ Ruta IA — app web
@@ -250,7 +218,7 @@ app.post('/webhook/whatsapp', async (req, res) => {
   const numeroUsuario = req.body.From;
   const mediaUrl = req.body.MediaUrl0;
   const mediaType = req.body.MediaContentType0;
-  let mensajeEntrada = req.body.Body?.trim();
+  let mensajeTexto = req.body.Body?.trim() || '';
 
   if (!numeroUsuario) return res.sendStatus(400);
 
@@ -270,10 +238,9 @@ app.post('/webhook/whatsapp', async (req, res) => {
     res.send(twiml.toString());
   };
 
+  // Comprobar límite
   const suscrito = isSuscrito(numeroUsuario);
   const consultasUsadas = getConsultasUsadas(numeroUsuario);
-
-  // Comprobar límite antes de procesar nada
   if (!suscrito && consultasUsadas >= LIMITE_CONSULTAS) {
     await enviarMensaje(
       `Has usado tus 5 consultas gratuitas de VITISENSE.\n\nPara seguir teniendo a tu agrónomo disponible sin límites, suscríbete en:\nhttps://www.vitisense.es\n\n7 días gratis, sin permanencia.`
@@ -281,73 +248,66 @@ app.post('/webhook/whatsapp', async (req, res) => {
     return twimlVacio();
   }
 
-  // ✅ AUDIO — transcribir con Whisper y tratar como texto
-  if (mediaUrl && mediaType && mediaType.startsWith('audio')) {
-    try {
-      console.log(`🎤 Audio de ${numeroUsuario}, transcribiendo...`);
-      mensajeEntrada = await transcribirAudio(mediaUrl);
-      console.log(`📝 Transcripción: ${mensajeEntrada}`);
-    } catch (err) {
-      console.error('❌ Error transcribiendo audio:', err);
-      await enviarMensaje('No he podido escuchar el audio. ¿Puedes escribirme la consulta?');
-      return twimlVacio();
-    }
-  }
+  try {
 
-  // ✅ IMAGEN — analizar con GPT-4o Vision
-  if (mediaUrl && mediaType && mediaType.startsWith('image')) {
-    console.log(`🖼️ Imagen de ${numeroUsuario}, analizando...`);
-
-    // Si no hay texto junto a la imagen, preguntar qué quiere saber
-    // Solo analiza directamente si el usuario escribió algo junto a la foto
-    if (!mensajeEntrada) {
-      // Guardar en historial que llegó una imagen sin contexto
-      pushHistorial(numeroUsuario, 'user', '[Imagen sin descripción]');
-
+    // ─── CASO 1: AUDIO ───
+    if (mediaUrl && mediaType && mediaType.startsWith('audio')) {
+      console.log(`🎤 Audio de ${numeroUsuario}`);
       try {
-        // Analizar la imagen pero pedir contexto al usuario
-        const imgResponse = await axios.get(mediaUrl, {
-          responseType: 'arraybuffer',
-          auth: { username: process.env.TWILIO_ACCOUNT_SID, password: process.env.TWILIO_AUTH_TOKEN },
-        });
-        const base64 = Buffer.from(imgResponse.data).toString('base64');
-        const mimeType = imgResponse.headers['content-type'] || 'image/jpeg';
-        const historialPrevio = loadHistorial(numeroUsuario).slice(-8);
-
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-4o',
-          messages: [
-            systemPromptWhatsApp,
-            ...historialPrevio,
-            {
-              role: 'user',
-              content: [
-                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
-                { type: 'text', text: 'El agricultor me ha enviado esta imagen sin explicación. Descríbeme brevemente en 1-2 frases qué ves, y hazle UNA pregunta concreta para entender qué problema tiene o qué quiere saber.' },
-              ],
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 300,
-        });
-
-        const respuesta = completion.choices[0].message.content;
-        pushHistorial(numeroUsuario, 'assistant', respuesta);
-
-        if (!suscrito) incrementarConsultas(numeroUsuario);
-        await enviarMensaje(respuesta);
-
+        mensajeTexto = await transcribirAudio(mediaUrl);
+        console.log(`📝 Transcripción: ${mensajeTexto}`);
       } catch (err) {
-        console.error('❌ Error analizando imagen sin texto:', err);
-        await enviarMensaje('Veo que me has mandado una foto. ¿Qué quieres que analice? ¿Qué está pasando en la planta?');
+        console.error('❌ Error transcribiendo:', err);
+        await enviarMensaje('No he podido escuchar el audio. ¿Puedes escribirme la consulta?');
+        return twimlVacio();
+      }
+      // El audio transcrito se procesa como texto — continúa abajo
+    }
+
+    // ─── CASO 2: IMAGEN ───
+    if (mediaUrl && mediaType && mediaType.startsWith('image')) {
+      console.log(`🖼️ Imagen de ${numeroUsuario}`);
+
+      let imagenBase64, imagenMime;
+      try {
+        const resultado = await descargarImagenBase64(mediaUrl);
+        imagenBase64 = resultado.base64;
+        imagenMime = resultado.mimeType;
+      } catch (err) {
+        console.error('❌ Error descargando imagen:', err);
+        await enviarMensaje('No he podido ver la imagen. ¿Puedes describirme qué observas en la planta?');
+        return twimlVacio();
       }
 
-      return twimlVacio();
-    }
+      // Obtener historial previo para dar contexto
+      const historialPrevio = getHistorial(numeroUsuario).slice(-8);
 
-    // Si el usuario mandó texto + imagen, analizar con contexto completo
-    try {
-      const respuesta = await analizarImagen(mediaUrl, mensajeEntrada, numeroUsuario);
+      // Texto de la consulta — si no mandó nada, analizar la imagen directamente
+      // como agrónomo experto sin pedir más info (comportamiento natural)
+      const textoConsulta = mensajeTexto ||
+        'Analiza esta imagen como agrónomo experto. Identifica qué ves, da tu diagnóstico y tu recomendación técnica concreta.';
+
+      const mensajeConImagen = {
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:${imagenMime};base64,${imagenBase64}` } },
+          { type: 'text', text: textoConsulta },
+        ],
+      };
+
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [systemPromptWhatsApp, ...historialPrevio, mensajeConImagen],
+        temperature: 0.7,
+        max_tokens: 1000,
+      });
+
+      const respuesta = completion.choices[0].message.content;
+
+      // Guardar en historial como texto para mantener hilo
+      addMensaje(numeroUsuario, 'user', `[Foto enviada] ${mensajeTexto || 'Sin descripción'}`);
+      addMensaje(numeroUsuario, 'assistant', respuesta);
+
       if (!suscrito) {
         incrementarConsultas(numeroUsuario);
         const consultaActual = consultasUsadas + 1;
@@ -359,26 +319,20 @@ app.post('/webhook/whatsapp', async (req, res) => {
       } else {
         await enviarMensaje(respuesta);
       }
-    } catch (err) {
-      console.error('❌ Error analizando imagen con texto:', err);
-      await enviarMensaje('No he podido analizar la imagen. ¿Puedes describirme qué ves en la planta?');
+
+      return twimlVacio();
     }
 
-    return twimlVacio();
-  }
+    // ─── CASO 3: TEXTO (o audio transcrito) ───
+    if (!mensajeTexto) {
+      await enviarMensaje('No he recibido ningún mensaje. ¿Puedes escribirme o enviarme un audio?');
+      return twimlVacio();
+    }
 
-  // ✅ TEXTO (o audio transcrito)
-  if (!mensajeEntrada) {
-    await enviarMensaje('No he recibido ningún mensaje. ¿Puedes escribirme o enviarme un audio?');
-    return twimlVacio();
-  }
+    console.log(`📱 WhatsApp [${numeroUsuario}]: ${mensajeTexto}`);
 
-  console.log(`📱 WhatsApp [${numeroUsuario}]: ${mensajeEntrada}`);
+    const historialReciente = addMensaje(numeroUsuario, 'user', mensajeTexto);
 
-  // Añadir al historial persistente y obtener los últimos 10
-  const historialReciente = pushHistorial(numeroUsuario, 'user', mensajeEntrada);
-
-  try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [systemPromptWhatsApp, ...historialReciente],
@@ -387,9 +341,7 @@ app.post('/webhook/whatsapp', async (req, res) => {
     });
 
     let respuesta = completion.choices[0].message.content;
-
-    // Guardar respuesta en historial
-    pushHistorial(numeroUsuario, 'assistant', respuesta);
+    addMensaje(numeroUsuario, 'assistant', respuesta);
 
     if (!suscrito) {
       incrementarConsultas(numeroUsuario);
@@ -402,7 +354,7 @@ app.post('/webhook/whatsapp', async (req, res) => {
     await enviarMensaje(respuesta);
 
   } catch (err) {
-    console.error('❌ Error webhook WhatsApp:', err);
+    console.error('❌ Error general webhook WhatsApp:', err);
     res.sendStatus(500);
     return;
   }
@@ -417,9 +369,9 @@ app.use((req, res) => {
 
 // ✅ Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor VITISENSE escuchando en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor VITISENSE en http://localhost:${PORT}`);
   console.log(`📱 Webhook WhatsApp en /webhook/whatsapp`);
   console.log(`🎤 Whisper activado`);
   console.log(`🖼️ GPT-4o Vision activado`);
-  console.log(`💾 Historial persistente activado`);
+  console.log(`💾 Historial en memoria activado`);
 });
