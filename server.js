@@ -161,7 +161,10 @@ app.post('/webhook/whatsapp', async (req, res) => {
       body: respuesta,
     });
 
-    res.sendStatus(200);
+    // ✅ Respuesta TwiML vacía — elimina el "OK" automático de Twilio
+    const twiml = new twilio.twiml.MessagingResponse();
+    res.type('text/xml');
+    res.send(twiml.toString());
 
   } catch (err) {
     console.error('❌ Error en webhook WhatsApp:', err);
