@@ -155,7 +155,6 @@ function incrementarConsultas(numeroWhatsApp) {
 // ─────────────────────────────────────────────
 
 async function transcribirAudio(mediaUrl) {
-  // Descargar el audio desde Twilio con autenticación básica
   const audioResponse = await axios.get(mediaUrl, {
     responseType: 'arraybuffer',
     auth: {
@@ -164,11 +163,9 @@ async function transcribirAudio(mediaUrl) {
     },
   });
 
-  // Guardar temporalmente el archivo
   const tmpPath = path.join('/tmp', `audio_${Date.now()}.ogg`);
   fs.writeFileSync(tmpPath, audioResponse.data);
 
-  // Enviar a Whisper para transcripción
   const formData = new FormData();
   formData.append('file', fs.createReadStream(tmpPath), {
     filename: 'audio.ogg',
@@ -188,10 +185,52 @@ async function transcribirAudio(mediaUrl) {
     }
   );
 
-  // Limpiar archivo temporal
   fs.unlinkSync(tmpPath);
-
   return whisperRes.data.text;
+}
+
+// ✅ ─────────────────────────────────────────────
+//    GPT-4o VISION — analizar imagen de WhatsApp
+// ─────────────────────────────────────────────
+
+async function analizarImagen(mediaUrl, textoAdicional) {
+  // Descargar imagen desde Twilio con autenticación
+  const imgResponse = await axios.get(mediaUrl, {
+    responseType: 'arraybuffer',
+    auth: {
+      username: process.env.TWILIO_ACCOUNT_SID,
+      password: process.env.TWILIO_AUTH_TOKEN,
+    },
+  });
+
+  // Convertir a base64
+  const base64 = Buffer.from(imgResponse.data).toString('base64');
+  const mimeType = imgResponse.headers['content-type'] || 'image/jpeg';
+
+  const mensajeUsuario = {
+    role: 'user',
+    content: [
+      {
+        type: 'image_url',
+        image_url: {
+          url: `data:${mimeType};base64,${base64}`,
+        },
+      },
+      {
+        type: 'text',
+        text: textoAdicional || 'Analiza esta imagen y dame tu diagnóstico y recomendación técnica.',
+      },
+    ],
+  };
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [systemPromptWhatsApp, mensajeUsuario],
+    temperature: 0.7,
+    max_tokens: 1000,
+  });
+
+  return completion.choices[0].message.content;
 }
 
 // ✅ Ruta IA (GPT-4o) — para la app web
@@ -225,9 +264,9 @@ app.post('/api/ask', async (req, res) => {
 const whatsappSessions = {};
 
 app.post('/webhook/whatsapp', async (req, res) => {
-  const numeroUsuario = req.body.From; // formato: whatsapp:+34XXXXXXXXX
-  const mediaUrl = req.body.MediaUrl0; // URL del audio si existe
-  const mediaType = req.body.MediaContentType0; // tipo de archivo
+  const numeroUsuario = req.body.From;
+  const mediaUrl = req.body.MediaUrl0;
+  const mediaType = req.body.MediaContentType0;
   let mensajeEntrada = req.body.Body?.trim();
 
   if (!numeroUsuario) return res.sendStatus(400);
@@ -245,7 +284,13 @@ app.post('/webhook/whatsapp', async (req, res) => {
     });
   };
 
-  // ✅ Si hay audio, transcribirlo con Whisper
+  const twimlVacio = () => {
+    const twiml = new twilio.twiml.MessagingResponse();
+    res.type('text/xml');
+    res.send(twiml.toString());
+  };
+
+  // ✅ Si hay AUDIO — transcribir con Whisper
   if (mediaUrl && mediaType && mediaType.startsWith('audio')) {
     try {
       console.log(`🎤 Audio recibido de ${numeroUsuario}, transcribiendo...`);
@@ -254,17 +299,59 @@ app.post('/webhook/whatsapp', async (req, res) => {
     } catch (err) {
       console.error('❌ Error transcribiendo audio:', err);
       await enviarMensaje('No he podido escuchar el audio. ¿Puedes escribirme la consulta?');
-      const twiml = new twilio.twiml.MessagingResponse();
-      res.type('text/xml');
-      return res.send(twiml.toString());
+      return twimlVacio();
     }
   }
 
+  // ✅ Si hay IMAGEN — analizar con GPT-4o Vision
+  if (mediaUrl && mediaType && mediaType.startsWith('image')) {
+    console.log(`🖼️ Imagen recibida de ${numeroUsuario}, analizando...`);
+
+    const suscrito = isSuscrito(numeroUsuario);
+
+    if (!suscrito) {
+      const consultasUsadas = getConsultasUsadas(numeroUsuario);
+
+      if (consultasUsadas >= LIMITE_CONSULTAS) {
+        await enviarMensaje(
+          `Has usado tus 5 consultas gratuitas de VITISENSE.\n\nPara seguir teniendo a tu agrónomo disponible sin límites, suscríbete en:\nhttps://www.vitisense.es\n\n7 días gratis, sin permanencia.`
+        );
+        return twimlVacio();
+      }
+
+      incrementarConsultas(numeroUsuario);
+      const consultaActual = consultasUsadas + 1;
+
+      try {
+        let respuesta = await analizarImagen(mediaUrl, mensajeEntrada);
+
+        if (consultaActual === AVISO_EN_CONSULTA) {
+          respuesta += `\n\n---\nLlevas ${consultaActual} de 5 consultas gratuitas. Si quieres acceso ilimitado, entra en vitisense.es — 7 días gratis.`;
+        }
+
+        await enviarMensaje(respuesta);
+      } catch (err) {
+        console.error('❌ Error analizando imagen:', err);
+        await enviarMensaje('No he podido analizar la imagen. ¿Puedes describirme qué ves en la planta?');
+      }
+
+    } else {
+      try {
+        const respuesta = await analizarImagen(mediaUrl, mensajeEntrada);
+        await enviarMensaje(respuesta);
+      } catch (err) {
+        console.error('❌ Error analizando imagen (suscrito):', err);
+        await enviarMensaje('No he podido analizar la imagen. ¿Puedes describirme qué ves en la planta?');
+      }
+    }
+
+    return twimlVacio();
+  }
+
+  // ✅ Mensaje de texto normal
   if (!mensajeEntrada) {
     await enviarMensaje('No he recibido ningún mensaje. ¿Puedes escribirme o enviarme un audio?');
-    const twiml = new twilio.twiml.MessagingResponse();
-    res.type('text/xml');
-    return res.send(twiml.toString());
+    return twimlVacio();
   }
 
   console.log(`📱 WhatsApp [${numeroUsuario}]: ${mensajeEntrada}`);
@@ -278,9 +365,7 @@ app.post('/webhook/whatsapp', async (req, res) => {
       await enviarMensaje(
         `Has usado tus 5 consultas gratuitas de VITISENSE.\n\nPara seguir teniendo a tu agrónomo disponible sin límites, suscríbete en:\nhttps://www.vitisense.es\n\n7 días gratis, sin permanencia.`
       );
-      const twiml = new twilio.twiml.MessagingResponse();
-      res.type('text/xml');
-      return res.send(twiml.toString());
+      return twimlVacio();
     }
 
     incrementarConsultas(numeroUsuario);
@@ -337,9 +422,7 @@ app.post('/webhook/whatsapp', async (req, res) => {
     }
   }
 
-  const twiml = new twilio.twiml.MessagingResponse();
-  res.type('text/xml');
-  res.send(twiml.toString());
+  twimlVacio();
 });
 
 // ✅ Ruta 404
@@ -351,5 +434,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor VITISENSE escuchando en http://localhost:${PORT}`);
   console.log(`📱 Webhook WhatsApp disponible en /webhook/whatsapp`);
-  console.log(`🎤 Transcripción de audios con Whisper activada`);
+  console.log(`🎤 Whisper activado para audios`);
+  console.log(`🖼️ GPT-4o Vision activado para imágenes`);
 });
