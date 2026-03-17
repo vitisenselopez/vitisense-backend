@@ -32,9 +32,9 @@ function getEmailFromToken(req) {
   }
 }
 
-// 🟢 REGISTRO
+// 🟢 REGISTRO — ahora guarda el WhatsApp si se proporciona
 router.post("/register", (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name, city, country, whatsapp } = req.body;
   if (!email || !password)
     return res.status(400).json({ error: "Faltan campos obligatorios." });
 
@@ -48,14 +48,31 @@ router.post("/register", (req, res) => {
 
   const existing = users.find((u) => u.email === email);
   if (!existing) {
-    users.push({
+    const nuevoUsuario = {
       email,
       password,
+      name: name || "",
+      city: city || "",
+      country: country || "",
       subscriptionActive: false,
       pending: true,
-    });
+    };
+
+    // ✅ Guardar WhatsApp si se proporcionó
+    if (whatsapp && whatsapp.trim()) {
+      nuevoUsuario.whatsapp = whatsapp.trim();
+      console.log(`📱 WhatsApp registrado con cuenta: ${whatsapp.trim()}`);
+    }
+
+    users.push(nuevoUsuario);
     saveUsers(users);
     console.log(`🟡 Usuario provisional guardado: ${email}`);
+  } else {
+    // Si ya existe pero aún no tiene WhatsApp, actualizarlo
+    if (whatsapp && whatsapp.trim() && !existing.whatsapp) {
+      existing.whatsapp = whatsapp.trim();
+      saveUsers(users);
+    }
   }
 
   const token = jwt.sign({ email, password }, process.env.JWT_SECRET, {
@@ -105,7 +122,7 @@ router.get("/me", (req, res) => {
   }
 });
 
-// ✅ OBTENER PERFIL — devuelve email y whatsapp del usuario
+// ✅ OBTENER PERFIL
 router.get("/perfil", (req, res) => {
   const email = getEmailFromToken(req);
   if (!email) return res.status(401).json({ error: "Token inválido." });
@@ -121,7 +138,7 @@ router.get("/perfil", (req, res) => {
   });
 });
 
-// ✅ VINCULAR NÚMERO DE WHATSAPP
+// ✅ VINCULAR NÚMERO DE WHATSAPP desde el cuaderno
 router.post("/whatsapp", (req, res) => {
   const email = getEmailFromToken(req);
   if (!email) return res.status(401).json({ error: "Token inválido." });
@@ -135,7 +152,6 @@ router.post("/whatsapp", (req, res) => {
 
   const users = loadUsers();
 
-  // Comprobar que el número no esté ya vinculado a otra cuenta
   const duplicado = users.find(
     (u) => u.whatsapp === numeroLimpio && u.email !== email
   );
