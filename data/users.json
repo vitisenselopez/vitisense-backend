@@ -1,7 +1,7 @@
 [
   {
     "email": "antoniolopez.2022.23@gmail.com",
-    "password": "12345678"
+    "password": "scrypt:5eaea4d34602dc366314bac0db4760d7:c9e59b4cfef85bb241d62a6343db4715689cc53f944e5b7ba79fa43803799fa79c9123b289adaa79324227c014cfe8e99f107c6c53194226186f1c26ab1c0fcd"
   },
   {
     "email": "eqwjdwjdkwdd@gmail.com",
@@ -52,5 +52,15 @@
     "subscriptionActive": false,
     "pending": true,
     "whatsapp": "+34653613798"
+  },
+  {
+    "email": "dsdsdsd@gmail.com",
+    "password": "123456",
+    "name": "dsdsdsds",
+    "city": "dsds",
+    "country": "sdsdsd",
+    "subscriptionActive": false,
+    "pending": true,
+    "whatsapp": "+34652524458"
   }
 ]

@@ -1,22 +1,32 @@
 {
   "conversations": [
     {
-      "id": "5eb2f7c6-4a29-4792-9608-d5e0bf1b8550",
-      "title": "1",
+      "id": "eff0abf3-0d2a-41cc-9fdf-f6c12663c883",
+      "title": "0.0",
       "messages": [
         {
           "sender": "user",
-          "text": "Hola",
+          "text": "Es septiembre, sabes que significa eso?",
           "imageUrl": null
         },
         {
           "sender": "ai",
-          "text": "Hola, ¿cómo va todo en la viña? ¿En qué puedo ayudarte hoy?",
+          "text": "Claro, en septiembre en muchas zonas de España, especialmente en regiones vitivinícolas importantes como La Rioja o Ribera del Duero, estamos en plena época de vendimia. El estado fenológico de las viñas suele estar en maduración o incluso en la recolección, dependiendo de la variedad y las condiciones climáticas de cada año. Es un momento crucial para decidir el momento óptimo de cosecha y gestionar cualquier problema de última hora, como botritis o problemas de maduración desigual. ¿Tienes alguna cuestión específica sobre la vendimia o el estado de tus viñas?",
+          "imageUrl": null
+        },
+        {
+          "sender": "user",
+          "text": "Cúal fue mi último tratamiento con azufre y dónde fue?",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "El último tratamiento con azufre que registraste fue el 14 de septiembre de 2026, aunque parece haber un error con la fecha, ya que no hemos llegado a esa fecha aún. Sin embargo, mencionaste un tratamiento el 15 de mayo de 2025, en una zona que llamas \"la hoya\". Si necesitas más detalles sobre tratamientos recientes o planificación de próximos pasos, dime y te ayudo.",
           "imageUrl": null
         }
       ],
-      "createdAt": "2026-09-14T12:35:31.226Z",
-      "updatedAt": "2026-09-14T12:35:31.235Z"
+      "createdAt": "2026-09-14T12:46:54.781Z",
+      "updatedAt": "2026-09-14T12:48:47.622Z"
     }
   ]
 }

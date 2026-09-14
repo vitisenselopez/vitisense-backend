@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const crypto = require("crypto");
 
 const router = express.Router();
 const USERS_FILE = path.join(__dirname, "../data/users.json");
@@ -17,6 +18,20 @@ function loadUsers() {
 
 function saveUsers(users) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+function passwordMatches(password, storedPassword) {
+  if (typeof storedPassword !== "string") return Promise.resolve(false);
+  if (!storedPassword.startsWith("scrypt:")) return Promise.resolve(password === storedPassword);
+
+  const [, salt, expected] = storedPassword.split(":");
+  return new Promise((resolve, reject) => {
+    crypto.scrypt(password, salt, 64, (err, derivedKey) => {
+      if (err) return reject(err);
+      const expectedBuffer = Buffer.from(expected, "hex");
+      resolve(expectedBuffer.length === derivedKey.length && crypto.timingSafeEqual(expectedBuffer, derivedKey));
+    });
+  });
 }
 
 // ✅ Helper para obtener el email del token
@@ -86,16 +101,17 @@ router.post("/register", (req, res) => {
 });
 
 // 🟢 LOGIN
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const users = loadUsers();
 
   if (!Array.isArray(users))
     return res.status(500).json({ error: "Error leyendo usuarios." });
 
-  const user = users.find((u) => u.email === email && u.password === password);
-  if (!user)
+  const user = users.find((u) => u.email === email);
+  if (!user || !(await passwordMatches(password, user.password))) {
     return res.status(401).json({ error: "Credenciales inválidas o usuario no registrado." });
+  }
 
   if (user.pending)
     return res.status(403).json({ error: "Debes completar el pago para acceder." });
