@@ -1,0 +1,22 @@
+{
+  "conversations": [
+    {
+      "id": "5eb2f7c6-4a29-4792-9608-d5e0bf1b8550",
+      "title": "1",
+      "messages": [
+        {
+          "sender": "user",
+          "text": "Hola",
+          "imageUrl": null
+        },
+        {
+          "sender": "ai",
+          "text": "Hola, ¿cómo va todo en la viña? ¿En qué puedo ayudarte hoy?",
+          "imageUrl": null
+        }
+      ],
+      "createdAt": "2026-09-14T12:35:31.226Z",
+      "updatedAt": "2026-09-14T12:35:31.235Z"
+    }
+  ]
+}

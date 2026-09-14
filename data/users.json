@@ -22,5 +22,35 @@
   {
     "email": "czvcdfdfsdfs@gmail.com",
     "password": "1234"
+  },
+  {
+    "email": "dsdsdsds@gmail.com",
+    "password": "marisa12",
+    "name": "Antonio",
+    "city": "Villagarcía ",
+    "country": "españa ",
+    "subscriptionActive": false,
+    "pending": true,
+    "whatsapp": "+34653613645"
+  },
+  {
+    "email": "dsfsfs@gmail.com",
+    "password": "marisa12",
+    "name": "antonio ",
+    "city": "españa",
+    "country": "españa",
+    "subscriptionActive": false,
+    "pending": true,
+    "whatsapp": "+34653612589"
+  },
+  {
+    "email": "adnkadj@gmail.com",
+    "password": "marisa12",
+    "name": "antonio",
+    "city": "españa",
+    "country": "españa",
+    "subscriptionActive": false,
+    "pending": true,
+    "whatsapp": "+34653613798"
   }
 ]
